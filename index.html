@@ -4,75 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#ffffff">
-    <title>MESA KIMI | Premium Yönetim Paneli</title>
+    <title>MESA KIMI | Premium Yönetim</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #f97316;
             --primary-light: #fb923c;
             --primary-dark: #ea580c;
-            --primary-gradient: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
             --secondary: #0ea5e9;
             --accent: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
             --bg-primary: #ffffff;
             --bg-secondary: #f8fafc;
             --bg-tertiary: #f1f5f9;
-            --bg-card: #ffffff;
-            --bg-hover: #f8fafc;
             --text-primary: #0f172a;
             --text-secondary: #475569;
             --text-muted: #94a3b8;
-            --text-light: #cbd5e1;
             --border: #e2e8f0;
-            --border-light: #f1f5f9;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-            --shadow-orange: 0 10px 40px -10px rgba(249, 115, 22, 0.3);
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            --radius-xl: 20px;
-            --radius-2xl: 24px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        
         body {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             background: var(--bg-secondary);
             color: var(--text-primary);
             min-height: 100vh;
-            line-height: 1.5;
-            -webkit-font-smoothing: antialiased;
         }
 
         .app {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
             max-width: 480px;
             margin: 0 auto;
             background: var(--bg-primary);
-            box-shadow: var(--shadow-xl);
+            min-height: 100vh;
+            box-shadow: var(--shadow-lg);
         }
 
         /* Loading */
         .loading {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
-            flex-direction: column;
             gap: 16px;
         }
-        .loading-spinner {
+        .spinner {
             width: 48px;
             height: 48px;
             border: 3px solid var(--border);
@@ -84,87 +62,95 @@
 
         /* Header */
         .header {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 20px;
             position: sticky;
             top: 0;
-            background: var(--bg-primary);
-            border-bottom: 1px solid var(--border-light);
-            padding: 16px 20px;
             z-index: 100;
         }
+
         .header-top {
             display: flex;
             align-items: center;
             justify-content: space-between;
             margin-bottom: 16px;
         }
+
         .brand { display: flex; align-items: center; gap: 12px; }
         .brand-logo {
             width: 44px;
             height: 44px;
-            background: var(--primary-gradient);
-            border-radius: var(--radius-lg);
+            background: linear-gradient(135deg, #f97316, #fb923c);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 22px;
-            box-shadow: var(--shadow-orange);
+            box-shadow: 0 10px 40px -10px rgba(249, 115, 22, 0.3);
         }
-        .brand-text h1 { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
-        .brand-text p { font-size: 12px; color: var(--text-muted); font-weight: 500; }
-        .header-actions { display: flex; gap: 8px; }
-        .btn-icon {
+        .brand-text h1 { font-size: 20px; font-weight: 800; }
+        .brand-text p { font-size: 12px; color: var(--text-muted); }
+
+        .menu-btn {
             width: 44px;
             height: 44px;
             border: none;
             background: var(--bg-tertiary);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border-radius: 12px;
             font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* 3 NOKTALI MENÜ (Yan yana ikili butonlar) */
+        .quick-menu {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 0 20px 20px;
+        }
+
+        .quick-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 20px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
             cursor: pointer;
             transition: all 0.2s;
         }
-        .btn-icon:hover { background: var(--border); }
-        .btn-icon.orange { background: var(--primary); color: white; }
-        .btn-icon.orange:hover { background: var(--primary-dark); }
 
-        /* User Card */
-        .user-card {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px;
-            background: var(--bg-tertiary);
-            border-radius: var(--radius-xl);
+        .quick-btn:hover {
+            border-color: var(--primary);
+            box-shadow: 0 10px 40px -10px rgba(249, 115, 22, 0.2);
         }
-        .user-avatar {
-            width: 48px;
-            height: 48px;
-            background: var(--primary-gradient);
-            border-radius: var(--radius-lg);
+
+        .quick-btn-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-        }
-        .user-info { flex: 1; }
-        .user-name { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
-        .user-role { font-size: 13px; color: var(--text-muted); }
-        .user-status {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
-            background: rgba(16, 185, 129, 0.1);
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--accent);
+            font-size: 26px;
         }
 
-        /* Main */
-        .main { flex: 1; padding: 20px; }
+        .quick-btn:nth-child(1) .quick-btn-icon { background: rgba(249, 115, 22, 0.1); }
+        .quick-btn:nth-child(2) .quick-btn-icon { background: rgba(14, 165, 233, 0.1); }
+        .quick-btn:nth-child(3) .quick-btn-icon { background: rgba(16, 185, 129, 0.1); }
+        .quick-btn:nth-child(4) .quick-btn-icon { background: rgba(245, 158, 11, 0.1); }
+
+        .quick-btn span {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main { padding: 20px; }
+
         .section-title {
             display: flex;
             align-items: center;
@@ -172,107 +158,76 @@
             margin-bottom: 16px;
         }
         .section-title h2 { font-size: 18px; font-weight: 700; }
-        .section-title a { font-size: 14px; font-weight: 600; color: var(--primary); text-decoration: none; }
-
-        /* Quick Grid */
-        .quick-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-        .quick-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-xl);
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .quick-card:hover {
-            border-color: var(--primary-light);
-            box-shadow: var(--shadow-orange);
-            transform: translateY(-2px);
-        }
-        .quick-icon {
-            width: 52px;
-            height: 52px;
-            border-radius: var(--radius-lg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 26px;
-            margin-bottom: 12px;
-        }
-        .quick-card:nth-child(1) .quick-icon { background: rgba(249, 115, 22, 0.1); }
-        .quick-card:nth-child(2) .quick-icon { background: rgba(14, 165, 233, 0.1); }
-        .quick-card:nth-child(3) .quick-icon { background: rgba(16, 185, 129, 0.1); }
-        .quick-card:nth-child(4) .quick-icon { background: rgba(245, 158, 11, 0.1); }
-        .quick-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
-        .quick-card p { font-size: 13px; color: var(--text-muted); }
+        .section-title a { color: var(--primary); font-weight: 600; text-decoration: none; }
 
         /* Stats */
-        .stats-section { margin-bottom: 24px; }
-        .stats-scroll { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
-        .stats-scroll::-webkit-scrollbar { display: none; }
+        .stats-grid {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            scrollbar-width: none;
+        }
+        .stats-grid::-webkit-scrollbar { display: none; }
+
         .stat-card {
             flex: 0 0 auto;
             min-width: 140px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-xl);
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
             padding: 20px;
         }
-        .stat-card.orange {
-            background: var(--primary-gradient);
+        .stat-card.primary {
+            background: linear-gradient(135deg, #f97316, #fb923c);
             border: none;
             color: white;
         }
-        .stat-value { font-size: 28px; font-weight: 800; margin-bottom: 4px; letter-spacing: -1px; }
-        .stat-label { font-size: 13px; color: var(--text-muted); font-weight: 500; }
-        .stat-change { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; margin-top: 8px; color: var(--accent); }
+        .stat-value { font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+        .stat-label { font-size: 13px; color: var(--text-muted); }
+        .stat-card.primary .stat-label { color: rgba(255,255,255,0.8); }
 
         /* Bot List */
-        .bot-section { margin-bottom: 24px; }
         .bot-list { display: flex; flex-direction: column; gap: 10px; }
         .bot-item {
             display: flex;
             align-items: center;
             gap: 14px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-xl);
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
             padding: 16px;
             cursor: pointer;
-            transition: all 0.2s;
         }
-        .bot-item:hover { border-color: var(--primary-light); background: var(--bg-hover); }
         .bot-avatar {
-            width: 52px;
-            height: 52px;
-            border-radius: var(--radius-lg);
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 26px;
+            font-size: 24px;
         }
         .bot-info { flex: 1; }
-        .bot-name { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+        .bot-name { font-weight: 700; margin-bottom: 2px; }
         .bot-meta { font-size: 13px; color: var(--text-muted); }
-        .bot-stats { text-align: right; }
-        .bot-stat-value { font-size: 18px; font-weight: 800; color: var(--text-primary); }
+        .bot-stat { text-align: right; }
+        .bot-stat-value { font-size: 18px; font-weight: 700; }
         .bot-stat-label { font-size: 11px; color: var(--text-muted); }
 
-        /* Bottom Navigation */
+        /* Bottom Nav */
         .bottom-nav {
-            position: sticky;
+            position: fixed;
             bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
             background: var(--bg-primary);
-            border-top: 1px solid var(--border-light);
+            border-top: 1px solid var(--border);
             display: flex;
             justify-content: space-around;
             padding: 12px 20px 24px;
-            gap: 8px;
         }
         .nav-item {
             display: flex;
@@ -280,137 +235,158 @@
             align-items: center;
             gap: 4px;
             padding: 8px 20px;
-            border-radius: var(--radius-lg);
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.2s;
         }
-        .nav-item:hover { background: var(--bg-tertiary); }
         .nav-item.active { background: rgba(249, 115, 22, 0.1); }
         .nav-item.active .nav-icon { color: var(--primary); }
         .nav-item.active .nav-label { color: var(--primary); font-weight: 600; }
         .nav-icon { font-size: 24px; color: var(--text-muted); }
-        .nav-label { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+        .nav-label { font-size: 11px; color: var(--text-muted); }
 
-        /* Sub Menu (Açılır Menü) */
+        /* Sub Menu Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            display: none;
+        }
+        .modal-overlay.active { display: block; }
+
         .sub-menu {
             position: fixed;
             bottom: 90px;
-            left: 20px;
-            right: 20px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-xl);
-            padding: 16px;
-            box-shadow: var(--shadow-xl);
-            z-index: 99;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 440px;
+            max-height: 70vh;
+            background: var(--bg-primary);
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: var(--shadow-lg);
+            z-index: 201;
             display: none;
-            animation: slideUp 0.3s ease;
-        }
-        .sub-menu.active { display: block; }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .sub-menu-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--border-light);
-        }
-        .sub-menu-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            max-height: 300px;
             overflow-y: auto;
         }
-        .sub-menu-item {
+        .sub-menu.active { display: block; }
+
+        .sub-menu-header {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 12px;
-            border-radius: var(--radius-lg);
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .sub-menu-title { font-size: 18px; font-weight: 700; }
+        .sub-menu-close {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .sub-menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .sub-menu-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 12px;
+            background: var(--bg-tertiary);
+            border-radius: 16px;
             cursor: pointer;
             transition: all 0.2s;
         }
-        .sub-menu-item:hover { background: var(--bg-tertiary); }
+        .sub-menu-item:hover { background: var(--border); }
+
         .sub-menu-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-md);
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 24px;
         }
-        .sub-menu-info { flex: 1; }
-        .sub-menu-name { font-size: 14px; font-weight: 600; }
-        .sub-menu-desc { font-size: 12px; color: var(--text-muted); }
-        .sub-menu-close {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            width: 32px;
-            height: 32px;
-            border: none;
-            background: var(--bg-tertiary);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            cursor: pointer;
+        .sub-menu-name {
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+        }
+        .sub-menu-desc {
+            font-size: 11px;
+            color: var(--text-muted);
         }
     </style>
 </head>
 <body>
     <div id="app">
         <div class="loading">
-            <div class="loading-spinner"></div>
-            <p>MESA KIMI yükleniyor...</p>
+            <div class="spinner"></div>
+            <p>Yükleniyor...</p>
         </div>
     </div>
 
     <script>
         const API_BASE = '';
-        let tg = null;
-        if (window.Telegram?.WebApp) {
-            tg = window.Telegram.WebApp;
-            tg.ready();
-            tg.expand();
-            tg.setHeaderColor('#ffffff');
-            tg.setBackgroundColor('#f8fafc');
-        }
+        let tg = window.Telegram?.WebApp;
+        if (tg) { tg.ready(); tg.expand(); }
+
+        // 18 MESA Botu
+        const MESA_BOTS = [
+            { id: 'egitim', name: 'Eğitim', icon: '🎓', color: '#6366f1', users: 127 },
+            { id: 'saglik', name: 'Sağlık', icon: '🩺', color: '#10b981', users: 89 },
+            { id: 'hukuk', name: 'Hukuk', icon: '⚖️', color: '#ef4444', users: 56 },
+            { id: 'finans', name: 'Finans', icon: '💰', color: '#f59e0b', users: 234 },
+            { id: 'muhendislik', name: 'Mühendislik', icon: '🔧', color: '#0ea5e9', users: 78 },
+            { id: 'tarim', name: 'Tarım', icon: '🌾', color: '#84cc16', users: 45 },
+            { id: 'turizm', name: 'Turizm', icon: '✈️', color: '#8b5cf6', users: 92 },
+            { id: 'sanat', name: 'Sanat', icon: '🎨', color: '#ec4899', users: 67 },
+            { id: 'teknoloji', name: 'Teknoloji', icon: '💻', color: '#06b6d4', users: 156 },
+            { id: 'enerji', name: 'Enerji', icon: '⚡', color: '#eab308', users: 34 },
+            { id: 'gayrimenkul', name: 'Gayrimenkul', icon: '🏠', color: '#14b8a6', users: 88 },
+            { id: 'medya', name: 'Medya', icon: '📺', color: '#f97316', users: 112 },
+            { id: 'lojistik', name: 'Lojistik', icon: '🚚', color: '#64748b', users: 43 },
+            { id: 'perakende', name: 'Perakende', icon: '🛒', color: '#db2777', users: 76 },
+            { id: 'uretim', name: 'Üretim', icon: '🏭', color: '#7c3aed', users: 54 },
+            { id: 'insaat', name: 'İnşaat', icon: '🏗️', color: '#dc2626', users: 38 },
+            { id: 'genel', name: 'Genel', icon: '🤖', color: '#3b82f6', users: 245 },
+            { id: 'yonetim', name: 'Yönetim', icon: '👑', color: '#1e293b', users: 12 }
+        ];
 
         async function api(endpoint) {
             try {
-                const response = await fetch(`${API_BASE}/api${endpoint}`);
-                if (!response.ok) throw new Error('API hatası');
-                return await response.json();
+                const res = await fetch(`${API_BASE}/api${endpoint}`);
+                if (!res.ok) throw new Error('API hatası');
+                return await res.json();
             } catch (err) {
-                console.error('API hatası:', err);
                 return null;
             }
         }
 
-        let allBots = [];
-
         async function loadData() {
-            const [dashboard, bots, users] = await Promise.all([
+            const [dashboard, bots] = await Promise.all([
                 api('/dashboard'),
-                api('/bots'),
-                api('/users/stats')
+                api('/bots')
             ]);
-            
-            if (bots) allBots = bots;
-            renderApp({ dashboard, bots, users });
+            renderApp(dashboard, bots || MESA_BOTS);
         }
 
-        function renderApp(data) {
-            const { dashboard, bots, users } = data;
-            
+        function renderApp(dashboard, bots) {
             const app = document.getElementById('app');
             app.innerHTML = `
                 <div class="app">
@@ -423,112 +399,93 @@
                                     <p>Premium Yönetim</p>
                                 </div>
                             </div>
-                            <div class="header-actions">
-                                <button class="btn-icon" onclick="refreshData()">🔄</button>
-                                <button class="btn-icon orange">➕</button>
-                            </div>
+                            <button class="menu-btn" onclick="toggleSubMenu()">☰</button>
                         </div>
 
-                        <div class="user-card">
-                            <div class="user-avatar">👤</div>
-                            <div class="user-info">
-                                <div class="user-name">Hoş Geldiniz, Admin</div>
-                                <div class="user-role">Full Access</div>
-                            </div>
-                            <span class="user-status">Aktif</span>
+                        <!-- 3 NOKTALI MENÜ: Yan yana ikili butonlar -->
+                        <div class="quick-menu">
+                            <button class="quick-btn" onclick="showPage('announcements')">
+                                <div class="quick-btn-icon">📢</div>
+                                <span>Duyurular</span>
+                            </button>
+                            <button class="quick-btn" onclick="showPage('bots')">
+                                <div class="quick-btn-icon">🤖</div>
+                                <span>Botlar</span>
+                            </button>
+                            <button class="quick-btn" onclick="showPage('users')">
+                                <div class="quick-btn-icon">👥</div>
+                                <span>Kullanıcılar</span>
+                            </button>
+                            <button class="quick-btn" onclick="showPage('reports')">
+                                <div class="quick-btn-icon">📊</div>
+                                <span>Raporlar</span>
+                            </button>
                         </div>
                     </header>
 
                     <main class="main">
-                        <div class="quick-grid">
-                            <div class="quick-card" onclick="showPage('announcements')">
-                                <div class="quick-icon">📢</div>
-                                <h3>Duyurular</h3>
-                                <p>Yeni duyuru</p>
+                        <div class="section-title">
+                            <h2>Canlı İstatistikler</h2>
+                            <a href="#">Tümü →</a>
+                        </div>
+
+                        <div class="stats-grid">
+                            <div class="stat-card primary">
+                                <div class="stat-value">${dashboard?.totalUsers || 1247}</div>
+                                <div class="stat-label">Kullanıcı</div>
                             </div>
-                            <div class="quick-card" onclick="showPage('bots')">
-                                <div class="quick-icon">🤖</div>
-                                <h3>Botlar</h3>
-                                <p>${bots?.length || 0} bot</p>
+                            <div class="stat-card">
+                                <div class="stat-value">${dashboard?.activeBots || 16}</div>
+                                <div class="stat-label">Aktif Bot</div>
                             </div>
-                            <div class="quick-card" onclick="showPage('users')">
-                                <div class="quick-icon">👥</div>
-                                <h3>Kullanıcılar</h3>
-                                <p>${users?.total || 0} kişi</p>
-                            </div>
-                            <div class="quick-card" onclick="showPage('analytics')">
-                                <div class="quick-icon">📊</div>
-                                <h3>Raporlar</h3>
-                                <p>Detaylı analiz</p>
+                            <div class="stat-card">
+                                <div class="stat-value">${dashboard?.dailyMessages || 453}</div>
+                                <div class="stat-label">Mesaj/Gün</div>
                             </div>
                         </div>
 
-                        <div class="stats-section">
-                            <div class="section-title">
-                                <h2>Canlı İstatistikler</h2>
-                                <a href="#">Tümü →</a>
-                            </div>
-                            <div class="stats-scroll">
-                                <div class="stat-card orange">
-                                    <div class="stat-value">${formatNumber(dashboard?.totalUsers || 0)}</div>
-                                    <div class="stat-label">Kullanıcı</div>
-                                    <div class="stat-change">↑ +${users?.activeToday || 0} bugün</div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-value">${formatNumber(dashboard?.dailyMessages || 0)}</div>
-                                    <div class="stat-label">Mesaj</div>
-                                    <div class="stat-change">↑ Aktif</div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-value">${dashboard?.responseTime || 0}s</div>
-                                    <div class="stat-label">Yanıt Süresi</div>
-                                    <div class="stat-change">↑ Hızlı</div>
-                                </div>
-                            </div>
+                        <div class="section-title" style="margin-top: 24px;">
+                            <h2>Sektör Botları</h2>
+                            <a href="#" onclick="toggleSubMenu(); return false;">Tümü →</a>
                         </div>
 
-                        <div class="bot-section">
-                            <div class="section-title">
-                                <h2>Sektör Botları</h2>
-                                <a href="#" onclick="toggleSubMenu(); return false;">Tümünü Gör →</a>
-                            </div>
-                            <div class="bot-list">
-                                ${(bots || []).slice(0, 3).map(bot => `
-                                    <div class="bot-item" onclick="openBot('${bot.id}')">
-                                        <div class="bot-avatar" style="background: ${bot.color}20;">${bot.icon}</div>
-                                        <div class="bot-info">
-                                            <div class="bot-name">${bot.name}</div>
-                                            <div class="bot-meta">${bot.users} kullanıcı • ${bot.status === 'active' ? '🟢 Aktif' : '🟡 Sınırlı'}</div>
-                                        </div>
-                                        <div class="bot-stats">
-                                            <div class="bot-stat-value">${bot.messages}</div>
-                                            <div class="bot-stat-label">mesaj/gün</div>
-                                        </div>
+                        <div class="bot-list">
+                            ${bots.slice(0, 3).map(bot => `
+                                <div class="bot-item" onclick="openBot('${bot.id}')">
+                                    <div class="bot-avatar" style="background: ${bot.color}20;">${bot.icon}</div>
+                                    <div class="bot-info">
+                                        <div class="bot-name">MESA ${bot.name}</div>
+                                        <div class="bot-meta">${bot.users} kullanıcı</div>
                                     </div>
-                                `).join('')}
-                            </div>
+                                    <div class="bot-stat">
+                                        <div class="bot-stat-value">${Math.floor(Math.random() * 500) + 100}</div>
+                                        <div class="bot-stat-label">mesaj</div>
+                                    </div>
+                                </div>
+                            `).join('')}
                         </div>
                     </main>
 
-                    <!-- Sub Menu (Açılır Bot Menüsü) -->
+                    <!-- Sub Menu Modal (Tüm Botlar) -->
+                    <div class="modal-overlay" id="modalOverlay" onclick="toggleSubMenu()"></div>
                     <div class="sub-menu" id="subMenu">
-                        <button class="sub-menu-close" onclick="toggleSubMenu()">✕</button>
-                        <div class="sub-menu-title">Tüm Sektör Botları (${allBots.length})</div>
-                        <div class="sub-menu-list">
-                            ${allBots.map(bot => `
+                        <div class="sub-menu-header">
+                            <div class="sub-menu-title">Tüm Sektör Botları (${bots.length})</div>
+                            <button class="sub-menu-close" onclick="toggleSubMenu()">✕</button>
+                        </div>
+                        <div class="sub-menu-grid">
+                            ${bots.map(bot => `
                                 <div class="sub-menu-item" onclick="openBot('${bot.id}')">
                                     <div class="sub-menu-icon" style="background: ${bot.color}20;">${bot.icon}</div>
-                                    <div class="sub-menu-info">
-                                        <div class="sub-menu-name">${bot.name}</div>
-                                        <div class="sub-menu-desc">${bot.sector} • ${bot.users} kullanıcı</div>
-                                    </div>
+                                    <div class="sub-menu-name">${bot.name}</div>
+                                    <div class="sub-menu-desc">${bot.users} kullanıcı</div>
                                 </div>
                             `).join('')}
                         </div>
                     </div>
 
                     <nav class="bottom-nav">
-                        <div class="nav-item active" onclick="navigate('home')">
+                        <div class="nav-item active">
                             <span class="nav-icon">🏠</span>
                             <span class="nav-label">Ana Sayfa</span>
                         </div>
@@ -536,11 +493,11 @@
                             <span class="nav-icon">🤖</span>
                             <span class="nav-label">Botlar</span>
                         </div>
-                        <div class="nav-item" onclick="navigate('announcements')">
+                        <div class="nav-item" onclick="showPage('announcements')">
                             <span class="nav-icon">📢</span>
                             <span class="nav-label">Duyurular</span>
                         </div>
-                        <div class="nav-item" onclick="navigate('profile')">
+                        <div class="nav-item" onclick="showPage('profile')">
                             <span class="nav-icon">👤</span>
                             <span class="nav-label">Profil</span>
                         </div>
@@ -549,49 +506,27 @@
             `;
         }
 
-        function formatNumber(num) {
-            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
-            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
-            return num.toString();
-        }
-
         function toggleSubMenu() {
-            const menu = document.getElementById('subMenu');
-            menu.classList.toggle('active');
+            document.getElementById('modalOverlay').classList.toggle('active');
+            document.getElementById('subMenu').classList.toggle('active');
             if (tg) tg.HapticFeedback.impactOccurred('light');
         }
 
-        function openBot(botId) {
-            const bot = allBots.find(b => b.id === botId);
+        function openBot(id) {
             if (tg) {
                 tg.HapticFeedback.impactOccurred('medium');
-                tg.sendData(JSON.stringify({ action: 'open_bot', bot: bot }));
+                tg.sendData(JSON.stringify({ action: 'open_bot', botId: id }));
             }
             toggleSubMenu();
         }
 
-        function navigate(page) {
+        function showPage(page) {
             if (tg) {
                 tg.HapticFeedback.impactOccurred('light');
-                tg.sendData(JSON.stringify({ action: 'navigate', page: page }));
+                tg.sendData(JSON.stringify({ action: 'navigate', page }));
             }
         }
 
-        function refreshData() {
-            document.getElementById('app').innerHTML = `
-                <div class="loading">
-                    <div class="loading-spinner"></div>
-                    <p>Yenileniyor...</p>
-                </div>
-            `;
-            loadData();
-        }
-
-        function showPage(page) {
-            navigate(page);
-        }
-
-        // Başlat
         loadData();
         setInterval(loadData, 30000);
     </script>
