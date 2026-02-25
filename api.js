@@ -1,4 +1,10 @@
+/**
+ * MESA KIMI - TAM SÜRÜM
+ * SQL + Bot + Web App + AI Entegrasyonu
+ */
+
 const express = require('express');
+const { Pool } = require('pg');
 const cors = require('cors');
 const path = require('path');
 const TelegramBot = require('node-telegram-bot-api');
@@ -13,97 +19,193 @@ app.use(express.static(path.join(__dirname)));
 // ==========================================
 
 const CONFIG = {
+  DATABASE_URL: process.env.DATABASE_URL || 'postgres://postgres:zgUFYb7X64GeaS74n4cz4xwNa4wtal1O8q2NFQ1NWnT5u2hFkX5J7yL5DfsYOssj@postgresql-database-z0848sg4oocsk8o8kswwks00:5432/postgres',
   BOT_TOKEN: process.env.BOT_TOKEN || '8568828893:AAGSNh5FYXx-Y1khFtHlEQLDGikVLesC1Wg',
   WEBAPP_URL: process.env.WEBAPP_URL || 'https://telegram.mesakademi.com.tr',
   PORT: process.env.PORT || 3000
 };
 
 // ==========================================
+// VERİTABANI BAĞLANTISI
+// ==========================================
+
+let pool = null;
+let dbConnected = false;
+
+function connectDB() {
+  try {
+    pool = new Pool({
+      connectionString: CONFIG.DATABASE_URL,
+      ssl: false,
+      max: 10,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 10000
+    });
+
+    pool.on('error', (err) => {
+      console.error('🚨 DB Hatası:', err.message);
+      dbConnected = false;
+    });
+
+    console.log('⏳ Veritabanına bağlanılıyor...');
+    return pool;
+  } catch (err) {
+    console.error('❌ DB Bağlantı Hatası:', err.message);
+    return null;
+  }
+}
+
+pool = connectDB();
+
+// Bağlantıyı test et
+async function testDB() {
+  if (!pool) return false;
+  try {
+    const result = await pool.query('SELECT NOW() as time');
+    console.log('✅ Veritabanına bağlandı:', result.rows[0].time);
+    dbConnected = true;
+    return true;
+  } catch (err) {
+    console.error('❌ DB Test Hatası:', err.message);
+    dbConnected = false;
+    return false;
+  }
+}
+
+// ==========================================
 // 18 MESA BOTU
 // ==========================================
 
 const MESA_BOTS = [
-  { id: 'egitim', name: 'MESA Eğitim', username: '@MesaEgitim_Bot', sector: 'Eğitim', icon: '🎓', color: '#6366f1', users: 127, messages: 453 },
-  { id: 'saglik', name: 'MESA Sağlık', username: '@MesaSaglik_Bot', sector: 'Sağlık', icon: '🩺', color: '#10b981', users: 89, messages: 312 },
-  { id: 'hukuk', name: 'MESA Hukuk', username: '@MesaHukuk_Bot', sector: 'Hukuk', icon: '⚖️', color: '#ef4444', users: 56, messages: 198 },
-  { id: 'finans', name: 'MESA Finans', username: '@MesaFinans_Bot', sector: 'Finans', icon: '💰', color: '#f59e0b', users: 234, messages: 567 },
-  { id: 'muhendislik', name: 'MESA Mühendislik', username: '@MesaMuhendis_Bot', sector: 'Mühendislik', icon: '🔧', color: '#0ea5e9', users: 78, messages: 245 },
-  { id: 'tarim', name: 'MESA Tarım', username: '@MesaTarim_Bot', sector: 'Tarım', icon: '🌾', color: '#84cc16', users: 45, messages: 123 },
-  { id: 'turizm', name: 'MESA Turizm', username: '@MesaTurizm_Bot', sector: 'Turizm', icon: '✈️', color: '#8b5cf6', users: 92, messages: 189 },
-  { id: 'sanat', name: 'MESA Sanat', username: '@MesaSanat_Bot', sector: 'Sanat', icon: '🎨', color: '#ec4899', users: 67, messages: 156 },
-  { id: 'teknoloji', name: 'MESA Teknoloji', username: '@MesaTeknoloji_Bot', sector: 'Teknoloji', icon: '💻', color: '#06b6d4', users: 156, messages: 423 },
-  { id: 'enerji', name: 'MESA Enerji', username: '@MesaEnerji_Bot', sector: 'Enerji', icon: '⚡', color: '#eab308', users: 34, messages: 89 },
-  { id: 'gayrimenkul', name: 'MESA Gayrimenkul', username: '@MesaGayrimenkul_Bot', sector: 'Gayrimenkul', icon: '🏠', color: '#14b8a6', users: 88, messages: 234 },
-  { id: 'medya', name: 'MESA Medya', username: '@MesaMedya_Bot', sector: 'Medya', icon: '📺', color: '#f97316', users: 112, messages: 345 },
-  { id: 'lojistik', name: 'MESA Lojistik', username: '@MesaLojistik_Bot', sector: 'Lojistik', icon: '🚚', color: '#64748b', users: 43, messages: 98 },
-  { id: 'perakende', name: 'MESA Perakende', username: '@MesaPerakende_Bot', sector: 'Perakende', icon: '🛒', color: '#db2777', users: 76, messages: 187 },
-  { id: 'uretim', name: 'MESA Üretim', username: '@MesaUretim_Bot', sector: 'Üretim', icon: '🏭', color: '#7c3aed', users: 54, messages: 134 },
-  { id: 'insaat', name: 'MESA İnşaat', username: '@MesaInsaat_Bot', sector: 'İnşaat', icon: '🏗️', color: '#dc2626', users: 38, messages: 76 },
-  { id: 'genel', name: 'MESA Genel', username: '@MesAkademi_Bot', sector: 'Genel', icon: '🤖', color: '#3b82f6', users: 245, messages: 678 },
-  { id: 'yonetim', name: 'MESA Yönetim', username: '@AkademiMes_Bot', sector: 'Yönetim', icon: '👑', color: '#1e293b', users: 12, messages: 45 }
+  { id: 'egitim', name: 'MESA Eğitim', username: '@MesaEgitim_Bot', sector: 'Eğitim', icon: '🎓', color: '#6366f1' },
+  { id: 'saglik', name: 'MESA Sağlık', username: '@MesaSaglik_Bot', sector: 'Sağlık', icon: '🩺', color: '#10b981' },
+  { id: 'hukuk', name: 'MESA Hukuk', username: '@MesaHukuk_Bot', sector: 'Hukuk', icon: '⚖️', color: '#ef4444' },
+  { id: 'finans', name: 'MESA Finans', username: '@MesaFinans_Bot', sector: 'Finans', icon: '💰', color: '#f59e0b' },
+  { id: 'muhendislik', name: 'MESA Mühendislik', username: '@MesaMuhendis_Bot', sector: 'Mühendislik', icon: '🔧', color: '#0ea5e9' },
+  { id: 'tarim', name: 'MESA Tarım', username: '@MesaTarim_Bot', sector: 'Tarım', icon: '🌾', color: '#84cc16' },
+  { id: 'turizm', name: 'MESA Turizm', username: '@MesaTurizm_Bot', sector: 'Turizm', icon: '✈️', color: '#8b5cf6' },
+  { id: 'sanat', name: 'MESA Sanat', username: '@MesaSanat_Bot', sector: 'Sanat', icon: '🎨', color: '#ec4899' },
+  { id: 'teknoloji', name: 'MESA Teknoloji', username: '@MesaTeknoloji_Bot', sector: 'Teknoloji', icon: '💻', color: '#06b6d4' },
+  { id: 'enerji', name: 'MESA Enerji', username: '@MesaEnerji_Bot', sector: 'Enerji', icon: '⚡', color: '#eab308' },
+  { id: 'gayrimenkul', name: 'MESA Gayrimenkul', username: '@MesaGayrimenkul_Bot', sector: 'Gayrimenkul', icon: '🏠', color: '#14b8a6' },
+  { id: 'medya', name: 'MESA Medya', username: '@MesaMedya_Bot', sector: 'Medya', icon: '📺', color: '#f97316' },
+  { id: 'lojistik', name: 'MESA Lojistik', username: '@MesaLojistik_Bot', sector: 'Lojistik', icon: '🚚', color: '#64748b' },
+  { id: 'perakende', name: 'MESA Perakende', username: '@MesaPerakende_Bot', sector: 'Perakende', icon: '🛒', color: '#db2777' },
+  { id: 'uretim', name: 'MESA Üretim', username: '@MesaUretim_Bot', sector: 'Üretim', icon: '🏭', color: '#7c3aed' },
+  { id: 'insaat', name: 'MESA İnşaat', username: '@MesaInsaat_Bot', sector: 'İnşaat', icon: '🏗️', color: '#dc2626' },
+  { id: 'genel', name: 'MESA Genel', username: '@MesAkademi_Bot', sector: 'Genel', icon: '🤖', color: '#3b82f6' },
+  { id: 'yonetim', name: 'MESA Yönetim', username: '@AkademiMes_Bot', sector: 'Yönetim', icon: '👑', color: '#1e293b' }
 ];
-
-// Demo veriler
-const DASHBOARD_DATA = {
-  totalUsers: 1247,
-  activeUsers: 89,
-  totalMessages: 45231,
-  activeBots: 16,
-  responseTime: 1.2,
-  todayMessages: 453
-};
 
 // ==========================================
 // API ENDPOINTLERİ
 // ==========================================
 
-app.get('/api/dashboard', (req, res) => {
-  res.json({ success: true, data: DASHBOARD_DATA });
+// Dashboard - SQL'den çek
+app.get('/api/dashboard', async (req, res) => {
+  try {
+    if (!dbConnected) throw new Error('DB bağlı değil');
+    
+    const result = await pool.query(`
+      SELECT 
+        (SELECT COUNT(*) FROM mesa.users WHERE status = 'active') as total_users,
+        (SELECT COUNT(DISTINCT user_id) FROM mesa.telegram_messages WHERE created_at > NOW() - INTERVAL '24 hours') as active_users,
+        (SELECT COUNT(*) FROM mesa.telegram_messages) as total_messages,
+        (SELECT COUNT(*) FROM mesa.telegram_bots WHERE status = 'active') as active_bots
+    `);
+    
+    res.json({ success: true, data: result.rows[0] });
+  } catch (err) {
+    console.error('Dashboard hatası:', err.message);
+    // Demo veri
+    res.json({ 
+      success: true, 
+      data: { total_users: 1247, active_users: 89, total_messages: 45231, active_bots: 16 },
+      demo: true
+    });
+  }
 });
 
-app.get('/api/bots', (req, res) => {
-  res.json({ success: true, data: MESA_BOTS });
+// Bot listesi - SQL'den çek
+app.get('/api/bots', async (req, res) => {
+  try {
+    if (!dbConnected) throw new Error('DB bağlı değil');
+    
+    const result = await pool.query(`
+      SELECT b.*, 
+        COUNT(DISTINCT m.telegram_chat_id) as users,
+        COUNT(m.id) as messages
+      FROM mesa.telegram_bots b
+      LEFT JOIN mesa.telegram_messages m ON m.bot_id = b.id 
+        AND m.created_at > NOW() - INTERVAL '24 hours'
+      GROUP BY b.id
+      ORDER BY b.sector_name
+    `);
+    
+    if (result.rows.length > 0) {
+      res.json({ success: true, data: result.rows });
+    } else {
+      res.json({ success: true, data: MESA_BOTS, demo: true });
+    }
+  } catch (err) {
+    console.error('Bot listesi hatası:', err.message);
+    res.json({ success: true, data: MESA_BOTS, demo: true });
+  }
 });
 
-app.get('/api/bots/:id', (req, res) => {
-  const bot = MESA_BOTS.find(b => b.id === req.params.id);
-  if (!bot) return res.status(404).json({ success: false, error: 'Bot bulunamadı' });
-  res.json({ success: true, data: bot });
+// Kullanıcı istatistikleri
+app.get('/api/users/stats', async (req, res) => {
+  try {
+    if (!dbConnected) throw new Error('DB bağlı değil');
+    
+    const result = await pool.query(`
+      SELECT 
+        COUNT(*) as total,
+        COUNT(CASE WHEN last_active > NOW() - INTERVAL '24 hours' THEN 1 END) as active_today
+      FROM mesa.users
+    `);
+    
+    res.json({ success: true, data: result.rows[0] });
+  } catch (err) {
+    res.json({ success: true, data: { total: 1247, active_today: 89 }, demo: true });
+  }
 });
 
-app.get('/api/users/stats', (req, res) => {
+// Duyurular
+app.get('/api/announcements', async (req, res) => {
+  try {
+    if (!dbConnected) throw new Error('DB bağlı değil');
+    
+    const result = await pool.query(`
+      SELECT * FROM mesa.announcements 
+      ORDER BY created_at DESC 
+      LIMIT 10
+    `);
+    
+    res.json({ success: true, data: result.rows });
+  } catch (err) {
+    res.json({ 
+      success: true, 
+      data: [
+        { id: 1, title: 'Yeni KBN Karakterleri', content: '20 yeni karakter eklendi', type: 'feature', created_at: '2026-02-24' }
+      ],
+      demo: true
+    });
+  }
+});
+
+// Health check
+app.get('/health', async (req, res) => {
+  const dbStatus = await testDB();
   res.json({ 
     success: true, 
-    data: { total: 1247, activeToday: 89, newThisWeek: 23, banned: 3 }
+    status: dbStatus ? 'healthy' : 'degraded',
+    dbConnected: dbStatus,
+    timestamp: new Date().toISOString()
   });
 });
 
-app.get('/api/announcements', (req, res) => {
-  res.json({ 
-    success: true, 
-    data: [
-      { id: 1, title: 'Yeni KBN Karakterleri', content: '20 yeni karakter', type: 'feature', created_at: '2026-02-24' },
-      { id: 2, title: 'Planlı Bakım', content: 'Sistem bakımı', type: 'maintenance', created_at: '2026-02-22' }
-    ]
-  });
-});
-
-app.get('/api/telegram/commands', (req, res) => {
-  res.json({
-    success: true,
-    data: [
-      { command: 'start', description: '🤖 Botu başlat' },
-      { command: 'dashboard', description: '📊 Dashboard' },
-      { command: 'bots', description: '🤖 18 bot listele' },
-      { command: 'help', description: '🆘 Yardım' }
-    ]
-  });
-});
-
-app.get('/health', (req, res) => {
-  res.json({ success: true, status: 'healthy', timestamp: new Date().toISOString() });
-});
-
+// Ana sayfa
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
@@ -117,18 +219,30 @@ const bot = new TelegramBot(CONFIG.BOT_TOKEN, { polling: true });
 console.log('🤖 Telegram Bot başlatıldı!');
 
 // /start
-bot.onText(/\/start/, (msg) => {
+bot.onText(/\/start/, async (msg) => {
   const chatId = msg.chat.id;
   const name = msg.from.first_name || 'Kullanıcı';
   
-  const text = `Merhaba ${name}! 👋\n\n🤖 MESA KIMI - Premium Yönetim\n\n📊 Dashboard\n🤖 18 sektör botu\n📢 Duyurular\n👥 Kullanıcılar`;
+  // Kullanıcıyı DB'ye kaydet
+  if (dbConnected) {
+    try {
+      await pool.query(`
+        INSERT INTO mesa.users (telegram_id, username, first_name, last_active)
+        VALUES ($1, $2, $3, NOW())
+        ON CONFLICT (telegram_id) DO UPDATE SET last_active = NOW()
+      `, [msg.from.id, msg.from.username, msg.from.first_name]);
+    } catch (err) {
+      console.error('Kullanıcı kayıt hatası:', err.message);
+    }
+  }
+  
+  const text = `Merhaba ${name}! 👋\n\n🤖 MESA KIMI - Premium Yönetim Paneli\n\n📊 Dashboard\n🤖 18 sektör botu\n📢 Duyurular\n👥 Kullanıcılar`;
   
   const keyboard = {
     reply_markup: {
       keyboard: [
         ['📊 Dashboard', '🤖 Botlar'],
-        ['📢 Duyurular', '👥 Kullanıcılar'],
-        ['📈 İstatistikler', '⚙️ Ayarlar']
+        ['📢 Duyurular', '👥 Kullanıcılar']
       ],
       resize_keyboard: true
     }
@@ -138,26 +252,35 @@ bot.onText(/\/start/, (msg) => {
 });
 
 // /dashboard
-bot.onText(/\/dashboard/, (msg) => {
-  bot.sendMessage(msg.chat.id, `📊 Dashboard\n\n👥 Kullanıcı: 1,247\n💬 Mesaj: 45,231\n🤖 Bot: 16 aktif`);
+bot.onText(/\/dashboard/, async (msg) => {
+  try {
+    if (dbConnected) {
+      const result = await pool.query(`
+        SELECT 
+          (SELECT COUNT(*) FROM mesa.users) as total,
+          (SELECT COUNT(*) FROM mesa.telegram_bots WHERE status = 'active') as bots
+      `);
+      const data = result.rows[0];
+      bot.sendMessage(msg.chat.id, `📊 Dashboard\n\n👥 Kullanıcı: ${data.total}\n🤖 Aktif Bot: ${data.bots}`);
+    } else {
+      bot.sendMessage(msg.chat.id, `📊 Dashboard\n\n👥 Kullanıcı: 1,247\n🤖 Aktif Bot: 16`);
+    }
+  } catch (err) {
+    bot.sendMessage(msg.chat.id, `📊 Dashboard\n\n👥 Kullanıcı: 1,247\n🤖 Aktif Bot: 16`);
+  }
 });
 
 // /bots
 bot.onText(/\/bots/, (msg) => {
   let text = '🤖 Sektör Botları:\n\n';
   MESA_BOTS.forEach(b => {
-    text += `${b.icon} ${b.name}\n`;
+    text += `${b.icon} ${b.name} - ${b.username}\n`;
   });
   bot.sendMessage(msg.chat.id, text);
 });
 
-// /help
-bot.onText(/\/help/, (msg) => {
-  bot.sendMessage(msg.chat.id, `🆘 Yardım\n\n/start - Ana menü\n/dashboard - Dashboard\n/bots - Bot listesi\n/help - Yardım`);
-});
-
 // Butonlar
-bot.on('message', (msg) => {
+bot.on('message', async (msg) => {
   const chatId = msg.chat.id;
   const text = msg.text;
   
@@ -168,16 +291,10 @@ bot.on('message', (msg) => {
     bot.sendMessage(chatId, `🤖 18 bot aktif!\n\nEn çok kullanılan:\n1. 🎓 Eğitim\n2. 🩺 Sağlık\n3. 💰 Finans`);
   }
   else if (text === '📢 Duyurular') {
-    bot.sendMessage(chatId, `📢 Duyurular:\n\n1. 🎉 Yeni KBN Karakterleri\n2. 🔧 Planlı Bakım`);
+    bot.sendMessage(chatId, `📢 Son Duyurular:\n\n1. 🎉 Yeni KBN Karakterleri\n2. 🔧 Planlı Bakım`);
   }
   else if (text === '👥 Kullanıcılar') {
     bot.sendMessage(chatId, `👥 Kullanıcılar:\n\n• Toplam: 1,247\n• Bugün aktif: 89`);
-  }
-  else if (text === '📈 İstatistikler') {
-    bot.sendMessage(chatId, `📈 İstatistikler:\n\n• Bu ay: 12,456 mesaj\n• Ort. yanıt: 1.2s`);
-  }
-  else if (text === '⚙️ Ayarlar') {
-    bot.sendMessage(chatId, `⚙️ Ayarlar:\n\n🔐 2FA: ✅ Aktif\n🤖 AI: Claude 3.5`);
   }
 });
 
@@ -188,10 +305,18 @@ bot.on('polling_error', (err) => {
 console.log('✅ Bot hazır!');
 
 // ==========================================
-// SUNUCUYU BAŞLAT
+// BAŞLAT
 // ==========================================
 
-app.listen(CONFIG.PORT, () => {
-  console.log(`🚀 API çalışıyor: http://localhost:${CONFIG.PORT}`);
-  console.log('📊 SQL kullanılmıyor - Demo veriler aktif');
-});
+async function start() {
+  // DB bağlantısını test et
+  await testDB();
+  
+  // Sunucuyu başlat
+  app.listen(CONFIG.PORT, () => {
+    console.log(`🚀 API çalışıyor: http://localhost:${CONFIG.PORT}`);
+    console.log(`📊 DB Durumu: ${dbConnected ? '✅ Bağlı' : '❌ Bağlı değil (demo veri)'}`);
+  });
+}
+
+start();
