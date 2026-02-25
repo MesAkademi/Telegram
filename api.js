@@ -9,6 +9,7 @@ const cors = require('cors');
 const path = require('path');
 const TelegramBot = require('node-telegram-bot-api');
 const { MailReceiver, MailSender, setupMailCommands } = require('./mail');
+const { BotManager, setupBotCommands, MESA_BOTS } = require('./bots');
 
 const app = express();
 app.use(cors());
@@ -366,6 +367,16 @@ bot.on('contact', async (msg) => {
 console.log('✅ Bot hazır!');
 
 // ==========================================
+// 16 MESA BOTU YÖNETİMİ
+// ==========================================
+
+const botManager = new BotManager();
+botManager.startAll();
+
+// Bot komutlarını ayarla
+setupBotCommands(bot, botManager, null);
+
+// ==========================================
 // MAIL ENTEGRASYONU
 // ==========================================
 
@@ -403,6 +414,7 @@ async function start() {
   app.listen(CONFIG.PORT, () => {
     console.log(`🚀 API çalışıyor: http://localhost:${CONFIG.PORT}`);
     console.log(`📊 DB Durumu: ${dbConnected ? '✅ Bağlı' : '❌ Bağlı değil (demo veri)'}`);
+    console.log(`🤖 Bot Yönetimi: ${botManager.bots.size} bot hazır`);
     console.log(`📧 Mail Durumu: ${process.env.MAIL_USER ? '✅ Aktif' : '⚠️ Konfigürasyon gerekli'}`);
   });
 }
