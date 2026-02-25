@@ -10,43 +10,30 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Premium Aydınlık Palet */
             --primary: #f97316;
             --primary-light: #fb923c;
             --primary-dark: #ea580c;
             --primary-gradient: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
-            
             --secondary: #0ea5e9;
-            --secondary-light: #38bdf8;
             --accent: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
-            
-            /* Arka Plan */
             --bg-primary: #ffffff;
             --bg-secondary: #f8fafc;
             --bg-tertiary: #f1f5f9;
             --bg-card: #ffffff;
             --bg-hover: #f8fafc;
-            
-            /* Metin */
             --text-primary: #0f172a;
             --text-secondary: #475569;
             --text-muted: #94a3b8;
             --text-light: #cbd5e1;
-            
-            /* Kenarlık */
             --border: #e2e8f0;
             --border-light: #f1f5f9;
-            
-            /* Gölge */
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
             --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
             --shadow-orange: 0 10px 40px -10px rgba(249, 115, 22, 0.3);
-            
-            /* Radius */
             --radius-sm: 8px;
             --radius-md: 12px;
             --radius-lg: 16px;
@@ -54,16 +41,9 @@
             --radius-2xl: 24px;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        
         body {
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg-secondary);
@@ -73,7 +53,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* App Container */
         .app {
             min-height: 100vh;
             display: flex;
@@ -83,6 +62,27 @@
             background: var(--bg-primary);
             box-shadow: var(--shadow-xl);
         }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         /* Header */
         .header {
@@ -151,18 +151,9 @@
             transition: all 0.2s;
         }
 
-        .btn-icon:hover {
-            background: var(--border);
-        }
-
-        .btn-icon.orange {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-icon.orange:hover {
-            background: var(--primary-dark);
-        }
+        .btn-icon:hover { background: var(--border); }
+        .btn-icon.orange { background: var(--primary); color: white; }
+        .btn-icon.orange:hover { background: var(--primary-dark); }
 
         /* User Card */
         .user-card {
@@ -185,21 +176,9 @@
             font-size: 24px;
         }
 
-        .user-info {
-            flex: 1;
-        }
-
-        .user-name {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 2px;
-        }
-
-        .user-role {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
+        .user-info { flex: 1; }
+        .user-name { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+        .user-role { font-size: 13px; color: var(--text-muted); }
 
         .user-status {
             display: flex;
@@ -221,13 +200,9 @@
             border-radius: 50%;
         }
 
-        /* Main Content */
-        .main {
-            flex: 1;
-            padding: 20px;
-        }
+        /* Main */
+        .main { flex: 1; padding: 20px; }
 
-        /* Section Title */
         .section-title {
             display: flex;
             align-items: center;
@@ -248,7 +223,7 @@
             text-decoration: none;
         }
 
-        /* Quick Actions Grid */
+        /* Quick Grid */
         .quick-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -287,34 +262,13 @@
         .quick-card:nth-child(3) .quick-icon { background: rgba(16, 185, 129, 0.1); }
         .quick-card:nth-child(4) .quick-icon { background: rgba(245, 158, 11, 0.1); }
 
-        .quick-card h3 {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 4px;
-        }
+        .quick-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+        .quick-card p { font-size: 13px; color: var(--text-muted); }
 
-        .quick-card p {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        /* Stats Cards */
-        .stats-section {
-            margin-bottom: 24px;
-        }
-
-        .stats-scroll {
-            display: flex;
-            gap: 12px;
-            overflow-x: auto;
-            padding-bottom: 8px;
-            scrollbar-width: none;
-        }
-
-        .stats-scroll::-webkit-scrollbar {
-            display: none;
-        }
+        /* Stats */
+        .stats-section { margin-bottom: 24px; }
+        .stats-scroll { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
+        .stats-scroll::-webkit-scrollbar { display: none; }
 
         .stat-card {
             flex: 0 0 auto;
@@ -332,9 +286,7 @@
         }
 
         .stat-card.orange .stat-label,
-        .stat-card.orange .stat-change {
-            color: rgba(255, 255, 255, 0.8);
-        }
+        .stat-card.orange .stat-change { color: rgba(255, 255, 255, 0.8); }
 
         .stat-value {
             font-size: 28px;
@@ -343,11 +295,7 @@
             letter-spacing: -1px;
         }
 
-        .stat-label {
-            font-size: 13px;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
+        .stat-label { font-size: 13px; color: var(--text-muted); font-weight: 500; }
 
         .stat-change {
             display: inline-flex;
@@ -360,15 +308,8 @@
         }
 
         /* Bot List */
-        .bot-section {
-            margin-bottom: 24px;
-        }
-
-        .bot-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+        .bot-section { margin-bottom: 24px; }
+        .bot-list { display: flex; flex-direction: column; gap: 10px; }
 
         .bot-item {
             display: flex;
@@ -401,38 +342,14 @@
         .bot-item:nth-child(2) .bot-avatar { background: rgba(16, 185, 129, 0.1); }
         .bot-item:nth-child(3) .bot-avatar { background: rgba(245, 158, 11, 0.1); }
 
-        .bot-info {
-            flex: 1;
-        }
+        .bot-info { flex: 1; }
+        .bot-name { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+        .bot-meta { font-size: 13px; color: var(--text-muted); }
+        .bot-stats { text-align: right; }
+        .bot-stat-value { font-size: 18px; font-weight: 800; color: var(--text-primary); }
+        .bot-stat-label { font-size: 11px; color: var(--text-muted); }
 
-        .bot-name {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 2px;
-        }
-
-        .bot-meta {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        .bot-stats {
-            text-align: right;
-        }
-
-        .bot-stat-value {
-            font-size: 18px;
-            font-weight: 800;
-            color: var(--text-primary);
-        }
-
-        .bot-stat-label {
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
-        /* Bottom Navigation */
+        /* Bottom Nav */
         .bottom-nav {
             position: sticky;
             bottom: 0;
@@ -455,207 +372,249 @@
             transition: all 0.2s;
         }
 
-        .nav-item:hover {
-            background: var(--bg-tertiary);
-        }
+        .nav-item:hover { background: var(--bg-tertiary); }
+        .nav-item.active { background: rgba(249, 115, 22, 0.1); }
+        .nav-item.active .nav-icon { color: var(--primary); }
+        .nav-item.active .nav-label { color: var(--primary); font-weight: 600; }
+        .nav-icon { font-size: 24px; color: var(--text-muted); }
+        .nav-label { font-size: 11px; color: var(--text-muted); font-weight: 500; }
 
-        .nav-item.active {
-            background: rgba(249, 115, 22, 0.1);
+        /* Error */
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            margin: 20px;
+            text-align: center;
+            color: var(--danger);
         }
-
-        .nav-item.active .nav-icon {
-            color: var(--primary);
-        }
-
-        .nav-item.active .nav-label {
-            color: var(--primary);
-            font-weight: 600;
-        }
-
-        .nav-icon {
-            font-size: 24px;
-            color: var(--text-muted);
-        }
-
-        .nav-label {
-            font-size: 11px;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .animate-in {
-            animation: fadeIn 0.4s ease forwards;
-        }
-
-        .delay-1 { animation-delay: 0.1s; }
-        .delay-2 { animation-delay: 0.2s; }
-        .delay-3 { animation-delay: 0.3s; }
     </style>
 </head>
 <body>
-    <div class="app">
-        <!-- Header -->
-        <header class="header">
-            <div class="header-top">
-                <div class="brand">
-                    <div class="brand-logo">🤖</div>
-                    <div class="brand-text">
-                        <h1>MESA KIMI</h1>
-                        <p>Premium Yönetim</p>
-                    </div>
-                </div>
-                <div class="header-actions">
-                    <button class="btn-icon">🔍</button>
-                    <button class="btn-icon orange">➕</button>
-                </div>
-            </div>
-
-            <div class="user-card">
-                <div class="user-avatar">👤</div>
-                <div class="user-info">
-                    <div class="user-name">Hoş Geldiniz, Admin</div>
-                    <div class="user-role">Full Access</div>
-                </div>
-                <span class="user-status">Aktif</span>
-            </div>
-        </header>
-
-        <!-- Main -->
-        <main class="main">
-            <!-- Quick Actions -->
-            <div class="quick-grid animate-in">
-                <div class="quick-card" onclick="navigate('announcements')">
-                    <div class="quick-icon">📢</div>
-                    <h3>Duyurular</h3>
-                    <p>12 aktif</p>
-                </div>
-                <div class="quick-card" onclick="navigate('bots')">
-                    <div class="quick-icon">🤖</div>
-                    <h3>Botlar</h3>
-                    <p>16/18 aktif</p>
-                </div>
-                <div class="quick-card" onclick="navigate('users')">
-                    <div class="quick-icon">👥</div>
-                    <h3>Kullanıcılar</h3>
-                    <p>1,247 kayıtlı</p>
-                </div>
-                <div class="quick-card" onclick="navigate('analytics')">
-                    <div class="quick-icon">📊</div>
-                    <h3>Raporlar</h3>
-                    <p>Detaylı analiz</p>
-                </div>
-            </div>
-
-            <!-- Stats -->
-            <div class="stats-section animate-in delay-1">
-                <div class="section-title">
-                    <h2>Canlı İstatistikler</h2>
-                    <a href="#">Tümü →</a>
-                </div>
-                <div class="stats-scroll">
-                    <div class="stat-card orange">
-                        <div class="stat-value">1,247</div>
-                        <div class="stat-label">Kullanıcı</div>
-                        <div class="stat-change">↑ +89</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">45K</div>
-                        <div class="stat-label">Mesaj</div>
-                        <div class="stat-change">↑ +453</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">1.2s</div>
-                        <div class="stat-label">Yanıt Süresi</div>
-                        <div class="stat-change">↑ -0.3s</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bot List -->
-            <div class="bot-section animate-in delay-2">
-                <div class="section-title">
-                    <h2>Sektör Botları</h2>
-                    <a href="#">Yönet →</a>
-                </div>
-                <div class="bot-list">
-                    <div class="bot-item">
-                        <div class="bot-avatar">🎓</div>
-                        <div class="bot-info">
-                            <div class="bot-name">MESA Eğitim</div>
-                            <div class="bot-meta">127 kullanıcı aktif</div>
-                        </div>
-                        <div class="bot-stats">
-                            <div class="bot-stat-value">453</div>
-                            <div class="bot-stat-label">mesaj/gün</div>
-                        </div>
-                    </div>
-                    <div class="bot-item">
-                        <div class="bot-avatar">🩺</div>
-                        <div class="bot-info">
-                            <div class="bot-name">MESA Sağlık</div>
-                            <div class="bot-meta">89 kullanıcı aktif</div>
-                        </div>
-                        <div class="bot-stats">
-                            <div class="bot-stat-value">312</div>
-                            <div class="bot-stat-label">mesaj/gün</div>
-                        </div>
-                    </div>
-                    <div class="bot-item">
-                        <div class="bot-avatar">💰</div>
-                        <div class="bot-info">
-                            <div class="bot-name">MESA Finans</div>
-                            <div class="bot-meta">⚠️ Sınırlı mod</div>
-                        </div>
-                        <div class="bot-stats">
-                            <div class="bot-stat-value">567</div>
-                            <div class="bot-stat-label">mesaj/gün</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-
-        <!-- Bottom Nav -->
-        <nav class="bottom-nav">
-            <div class="nav-item active">
-                <span class="nav-icon">🏠</span>
-                <span class="nav-label">Ana Sayfa</span>
-            </div>
-            <div class="nav-item">
-                <span class="nav-icon">🤖</span>
-                <span class="nav-label">Botlar</span>
-            </div>
-            <div class="nav-item">
-                <span class="nav-icon">📢</span>
-                <span class="nav-label">Duyurular</span>
-            </div>
-            <div class="nav-item">
-                <span class="nav-icon">👤</span>
-                <span class="nav-label">Profil</span>
-            </div>
-        </nav>
+    <div id="app">
+        <div class="loading">
+            <div class="loading-spinner"></div>
+            <p>Yükleniyor...</p>
+        </div>
     </div>
 
     <script>
+        // API Base URL - Coolify'da aynı domain'de çalışacak
+        const API_BASE = window.location.origin.includes('localhost') 
+            ? 'http://localhost:3001' 
+            : '';
+
+        // Telegram Web App
+        let tg = null;
         if (window.Telegram?.WebApp) {
-            const tg = window.Telegram.WebApp;
+            tg = window.Telegram.WebApp;
             tg.ready();
             tg.expand();
             tg.setHeaderColor('#ffffff');
             tg.setBackgroundColor('#f8fafc');
         }
 
-        function navigate(page) {
-            if (window.Telegram?.WebApp) {
-                window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+        // API isteği
+        async function api(endpoint) {
+            try {
+                const response = await fetch(`${API_BASE}/api${endpoint}`);
+                if (!response.ok) throw new Error('API hatası');
+                return await response.json();
+            } catch (err) {
+                console.error('API hatası:', err);
+                return null;
             }
         }
+
+        // Dashboard verilerini çek
+        async function loadDashboard() {
+            const [dashboard, bots, users] = await Promise.all([
+                api('/dashboard'),
+                api('/bots'),
+                api('/users/stats')
+            ]);
+
+            renderApp({ dashboard, bots, users });
+        }
+
+        // Uygulamayı render et
+        function renderApp(data) {
+            const { dashboard, bots, users } = data;
+            
+            const app = document.getElementById('app');
+            app.innerHTML = `
+                <div class="app">
+                    <header class="header">
+                        <div class="header-top">
+                            <div class="brand">
+                                <div class="brand-logo">🤖</div>
+                                <div class="brand-text">
+                                    <h1>MESA KIMI</h1>
+                                    <p>Premium Yönetim</p>
+                                </div>
+                            </div>
+                            <div class="header-actions">
+                                <button class="btn-icon" onclick="refreshData()">🔄</button>
+                                <button class="btn-icon orange">➕</button>
+                            </div>
+                        </div>
+
+                        <div class="user-card">
+                            <div class="user-avatar">👤</div>
+                            <div class="user-info">
+                                <div class="user-name">Hoş Geldiniz, Admin</div>
+                                <div class="user-role">Full Access</div>
+                            </div>
+                            <span class="user-status">Aktif</span>
+                        </div>
+                    </header>
+
+                    <main class="main">
+                        <!-- Quick Actions -->
+                        <div class="quick-grid">
+                            <div class="quick-card" onclick="showPage('announcements')">
+                                <div class="quick-icon">📢</div>
+                                <h3>Duyurular</h3>
+                                <p>Yeni duyuru</p>
+                            </div>
+                            <div class="quick-card" onclick="showPage('bots')">
+                                <div class="quick-icon">🤖</div>
+                                <h3>Botlar</h3>
+                                <p>${bots?.length || 0} bot</p>
+                            </div>
+                            <div class="quick-card" onclick="showPage('users')">
+                                <div class="quick-icon">👥</div>
+                                <h3>Kullanıcılar</h3>
+                                <p>${users?.total || 0} kişi</p>
+                            </div>
+                            <div class="quick-card" onclick="showPage('analytics')">
+                                <div class="quick-icon">📊</div>
+                                <h3>Raporlar</h3>
+                                <p>Detaylı analiz</p>
+                            </div>
+                        </div>
+
+                        <!-- Stats -->
+                        <div class="stats-section">
+                            <div class="section-title">
+                                <h2>Canlı İstatistikler</h2>
+                                <a href="#">Tümü →</a>
+                            </div>
+                            <div class="stats-scroll">
+                                <div class="stat-card orange">
+                                    <div class="stat-value">${formatNumber(dashboard?.totalUsers || 0)}</div>
+                                    <div class="stat-label">Kullanıcı</div>
+                                    <div class="stat-change">↑ +${users?.activeToday || 0} bugün</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-value">${formatNumber(dashboard?.totalMessages || 0)}</div>
+                                    <div class="stat-label">Mesaj</div>
+                                    <div class="stat-change">↑ Aktif</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-value">${dashboard?.responseTime || 0}s</div>
+                                    <div class="stat-label">Yanıt Süresi</div>
+                                    <div class="stat-change">↑ Hızlı</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bot List -->
+                        <div class="bot-section">
+                            <div class="section-title">
+                                <h2>Sektör Botları</h2>
+                                <a href="#">Yönet →</a>
+                            </div>
+                            <div class="bot-list">
+                                ${(bots || []).slice(0, 3).map(bot => `
+                                    <div class="bot-item" onclick="showBotDetail('${bot.id}')">
+                                        <div class="bot-avatar">${getBotIcon(bot.sector)}</div>
+                                        <div class="bot-info">
+                                            <div class="bot-name">${bot.name}</div>
+                                            <div class="bot-meta">${bot.users} kullanıcı • ${bot.status === 'active' ? '🟢 Aktif' : '🟡 Sınırlı'}</div>
+                                        </div>
+                                        <div class="bot-stats">
+                                            <div class="bot-stat-value">${bot.messages}</div>
+                                            <div class="bot-stat-label">mesaj/gün</div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </main>
+
+                    <nav class="bottom-nav">
+                        <div class="nav-item active">
+                            <span class="nav-icon">🏠</span>
+                            <span class="nav-label">Ana Sayfa</span>
+                        </div>
+                        <div class="nav-item" onclick="showPage('bots')">
+                            <span class="nav-icon">🤖</span>
+                            <span class="nav-label">Botlar</span>
+                        </div>
+                        <div class="nav-item" onclick="showPage('announcements')">
+                            <span class="nav-icon">📢</span>
+                            <span class="nav-label">Duyurular</span>
+                        </div>
+                        <div class="nav-item" onclick="showPage('profile')">
+                            <span class="nav-icon">👤</span>
+                            <span class="nav-label">Profil</span>
+                        </div>
+                    </nav>
+                </div>
+            `;
+        }
+
+        // Yardımcı fonksiyonlar
+        function formatNumber(num) {
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+            return num.toString();
+        }
+
+        function getBotIcon(sector) {
+            const icons = {
+                'Eğitim': '🎓',
+                'Sağlık': '🩺',
+                'Hukuk': '⚖️',
+                'Finans': '💰',
+                'Mühendislik': '🔧',
+                'Tarım': '🌾'
+            };
+            return icons[sector] || '🤖';
+        }
+
+        function refreshData() {
+            if (tg) tg.HapticFeedback.impactOccurred('light');
+            document.getElementById('app').innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Yenileniyor...</p>
+                </div>
+            `;
+            loadDashboard();
+        }
+
+        function showPage(page) {
+            if (tg) {
+                tg.HapticFeedback.impactOccurred('light');
+                tg.sendData(JSON.stringify({ action: 'navigate', page }));
+            }
+        }
+
+        function showBotDetail(botId) {
+            if (tg) {
+                tg.HapticFeedback.impactOccurred('medium');
+                tg.sendData(JSON.stringify({ action: 'bot_detail', botId }));
+            }
+        }
+
+        // Başlat
+        loadDashboard();
+
+        // Her 30 saniyede bir yenile
+        setInterval(loadDashboard, 30000);
     </script>
 </body>
 </html>
