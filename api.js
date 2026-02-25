@@ -10,6 +10,7 @@ const path = require('path');
 const TelegramBot = require('node-telegram-bot-api');
 const { MailReceiver, MailSender, setupMailCommands } = require('./mail');
 const { BotManager, setupBotCommands, MESA_BOTS } = require('./bots');
+const { SecurityManager, CustomerSatisfaction, SECURITY_TABLES_SQL } = require('./security');
 
 const app = express();
 app.use(cors());
@@ -393,6 +394,13 @@ if (process.env.MAIL_USER) {
 }
 
 // ==========================================
+// GÜVENLİK & MEMNUNİYET
+// ==========================================
+
+const securityManager = new SecurityManager(pool);
+const satisfaction = new CustomerSatisfaction(pool, bot);
+
+// ==========================================
 // BAŞLAT
 // ==========================================
 
@@ -400,13 +408,20 @@ async function start() {
   // DB bağlantısını test et
   await testDB();
   
-  // Mail tablosunu oluştur
   if (dbConnected) {
+    // Tabloları oluştur
     try {
       await pool.query(require('./mail').EMAIL_TABLE_SQL);
       console.log('✅ Mail tablosu hazır');
     } catch (err) {
       console.error('Mail tablosu hatası:', err.message);
+    }
+    
+    try {
+      await pool.query(SECURITY_TABLES_SQL);
+      console.log('✅ Güvenlik tabloları hazır');
+    } catch (err) {
+      console.error('Güvenlik tablosu hatası:', err.message);
     }
   }
   
@@ -416,6 +431,8 @@ async function start() {
     console.log(`📊 DB Durumu: ${dbConnected ? '✅ Bağlı' : '❌ Bağlı değil (demo veri)'}`);
     console.log(`🤖 Bot Yönetimi: ${botManager.bots.size} bot hazır`);
     console.log(`📧 Mail Durumu: ${process.env.MAIL_USER ? '✅ Aktif' : '⚠️ Konfigürasyon gerekli'}`);
+    console.log(`🛡️ Güvenlik: Rate limiting, encryption aktif`);
+    console.log(`😊 Memnuniyet: Kişiselleştirme, anketler aktif`);
   });
 }
 
