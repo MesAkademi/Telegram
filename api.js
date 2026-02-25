@@ -1,10 +1,14 @@
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Statik dosyaları servis et (index.html)
+app.use(express.static(path.join(__dirname)));
 
 // PostgreSQL Bağlantısı
 const pool = new Pool({
