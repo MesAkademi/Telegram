@@ -1,9 +1,20 @@
-FROM nginx:alpine
+FROM node:18-alpine
 
-COPY . /usr/share/nginx/html
+WORKDIR /app
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Bağımlılıkları kopyala ve yükle
+COPY package*.json ./
+RUN npm ci --only=production
 
-EXPOSE 80 3000
+# Uygulama dosyalarını kopyala
+COPY . .
 
-CMD ["nginx", "-g", "daemon off;"]
+# Port
+EXPOSE 3000
+
+# Sağlık kontrolü
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/health', (r) => r.statusCode === 200 ? process.exit(0) : process.exit(1))"
+
+# Başlat
+CMD ["npm", "start"]
