@@ -1,16 +1,18 @@
 {
-  "name": "mesa-kimi-api",
+  "name": "mesa-kimi-bot",
   "version": "1.0.0",
-  "description": "MESA KIMI Yönetim Paneli API",
+  "description": "MESA KIMI Telegram Bot ve Web App",
   "main": "api.js",
   "scripts": {
     "start": "node api.js",
+    "bot": "node bot.js",
     "dev": "nodemon api.js"
   },
   "dependencies": {
     "express": "^4.18.2",
     "cors": "^2.8.5",
-    "pg": "^8.11.3"
+    "pg": "^8.11.3",
+    "node-telegram-bot-api": "^0.64.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
