@@ -1,6 +1,6 @@
 /**
  * MESA KIMI - TAM SÜRÜM
- * SQL + Bot + Web App + AI Entegrasyonu
+ * SQL + Bot + Web App + Mail Entegrasyonu
  */
 
 const express = require('express');
@@ -8,6 +8,7 @@ const { Pool } = require('pg');
 const cors = require('cors');
 const path = require('path');
 const TelegramBot = require('node-telegram-bot-api');
+const { MailReceiver, MailSender, setupMailCommands } = require('./mail');
 
 const app = express();
 app.use(cors());
@@ -365,6 +366,22 @@ bot.on('contact', async (msg) => {
 console.log('✅ Bot hazır!');
 
 // ==========================================
+// MAIL ENTEGRASYONU
+// ==========================================
+
+const mailSender = new MailSender();
+const mailReceiver = new MailReceiver(bot, pool);
+
+// Mail komutlarını ayarla
+setupMailCommands(bot, pool, mailSender);
+
+// Mail alıcıyı başlat (eğer config varsa)
+if (process.env.MAIL_USER) {
+  mailReceiver.connect();
+  console.log('📧 Mail alıcı başlatıldı');
+}
+
+// ==========================================
 // BAŞLAT
 // ==========================================
 
@@ -372,10 +389,21 @@ async function start() {
   // DB bağlantısını test et
   await testDB();
   
+  // Mail tablosunu oluştur
+  if (dbConnected) {
+    try {
+      await pool.query(require('./mail').EMAIL_TABLE_SQL);
+      console.log('✅ Mail tablosu hazır');
+    } catch (err) {
+      console.error('Mail tablosu hatası:', err.message);
+    }
+  }
+  
   // Sunucuyu başlat
   app.listen(CONFIG.PORT, () => {
     console.log(`🚀 API çalışıyor: http://localhost:${CONFIG.PORT}`);
     console.log(`📊 DB Durumu: ${dbConnected ? '✅ Bağlı' : '❌ Bağlı değil (demo veri)'}`);
+    console.log(`📧 Mail Durumu: ${process.env.MAIL_USER ? '✅ Aktif' : '⚠️ Konfigürasyon gerekli'}`);
   });
 }
 
