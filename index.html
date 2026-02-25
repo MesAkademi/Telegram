@@ -3,214 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MESA KIMI - Yönetim Paneli</title>
+    <meta name="theme-color" content="#0f172a">
+    <title>MESA KIMI | Ultra Premium Yönetim</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --primary-dark: #4f46e5;
+            --secondary: #f59e0b;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --bg-card: rgba(30, 41, 59, 0.8);
+            --bg-glass: rgba(255, 255, 255, 0.05);
+            
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            
+            --gradient-1: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+            --gradient-2: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            --gradient-3: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+            --gradient-4: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+            --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.3);
+            
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --radius-2xl: 32px;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        :root {
-            --primary: #1a365d;
-            --secondary: #d69e2e;
-            --accent: #38a169;
-            --danger: #e53e3e;
-            --bg: #f7fafc;
-            --sidebar-bg: #1a202c;
-            --text: #2d3748;
-            --text-light: #718096;
-            --border: #e2e8f0;
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
             overflow-x: hidden;
+            line-height: 1.6;
         }
 
-        /* Telegram Web App için */
-        body.telegram-webapp {
-            padding-top: env(safe-area-inset-top);
-        }
-
-        /* ========== SIDEBAR (SOL MENÜ) ========== */
-        .sidebar {
+        /* Animated Background */
+        .bg-animation {
             position: fixed;
-            left: 0;
             top: 0;
-            width: 280px;
-            height: 100vh;
-            background: var(--sidebar-bg);
-            color: white;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
-            z-index: 1000;
-            overflow-y: auto;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
         }
 
-        .sidebar.active {
-            transform: translateX(0);
-        }
-
-        .sidebar-header {
-            padding: 20px;
-            background: linear-gradient(135deg, var(--primary) 0%, #2d3748 100%);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .sidebar-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .sidebar-logo-icon {
-            width: 48px;
-            height: 48px;
-            background: var(--secondary);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-
-        .sidebar-logo-text h1 {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .sidebar-logo-text p {
-            font-size: 12px;
-            opacity: 0.7;
-        }
-
-        .sidebar-user {
-            padding: 15px 20px;
-            background: rgba(255,255,255,0.05);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .sidebar-user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .sidebar-user-avatar {
-            width: 40px;
-            height: 40px;
-            background: var(--accent);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-
-        .sidebar-user-details h3 {
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .sidebar-user-details p {
-            font-size: 12px;
-            opacity: 0.6;
-        }
-
-        .sidebar-nav {
-            padding: 10px 0;
-        }
-
-        .sidebar-nav-title {
-            padding: 15px 20px 10px;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            opacity: 0.5;
-        }
-
-        .sidebar-nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border-left: 3px solid transparent;
-        }
-
-        .sidebar-nav-item:hover,
-        .sidebar-nav-item.active {
-            background: rgba(255,255,255,0.1);
-            border-left-color: var(--secondary);
-        }
-
-        .sidebar-nav-item i {
-            font-size: 20px;
-            width: 24px;
-            text-align: center;
-        }
-
-        .sidebar-nav-item span {
-            font-size: 14px;
-        }
-
-        .sidebar-footer {
+        .bg-animation::before {
+            content: '';
             position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 15px 20px;
-            background: rgba(0,0,0,0.2);
-            border-top: 1px solid rgba(255,255,255,0.1);
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(6, 182, 212, 0.08) 0%, transparent 40%);
+            animation: bgFloat 20s ease-in-out infinite;
         }
 
-        .sidebar-footer-item {
+        @keyframes bgFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(1deg); }
+            66% { transform: translate(-20px, 20px) rotate(-1deg); }
+        }
+
+        /* App Container */
+        .app {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
             display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 0;
-            cursor: pointer;
-            opacity: 0.7;
-            transition: opacity 0.2s;
+            flex-direction: column;
         }
 
-        .sidebar-footer-item:hover {
-            opacity: 1;
-        }
-
-        /* ========== OVERLAY ========== */
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-            z-index: 999;
-        }
-
-        .overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        /* ========== HEADER ========== */
+        /* Header */
         .header {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            height: 60px;
-            background: white;
-            border-bottom: 1px solid var(--border);
+            height: 70px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -218,198 +123,413 @@
             z-index: 100;
         }
 
-        .header-left {
+        .header-brand {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
 
-        .menu-toggle {
-            width: 40px;
-            height: 40px;
-            border: none;
-            background: none;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 5px;
-            padding: 10px;
-        }
-
-        .menu-toggle span {
-            display: block;
-            width: 20px;
-            height: 2px;
-            background: var(--text);
-            transition: all 0.3s;
-        }
-
-        .header-title {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .header-btn {
-            width: 40px;
-            height: 40px;
-            border: none;
-            background: var(--bg);
-            border-radius: 10px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            transition: all 0.2s;
-        }
-
-        .header-btn:hover {
-            background: var(--border);
-        }
-
-        /* ========== MAIN CONTENT ========== */
-        .main {
-            margin-top: 60px;
-            padding: 20px;
-            min-height: calc(100vh - 60px);
-        }
-
-        /* ========== DASHBOARD CARDS ========== */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        .stat-card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-
-        .stat-card-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
+        .logo {
+            width: 44px;
+            height: 44px;
+            background: var(--gradient-1);
+            border-radius: var(--radius-lg);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 24px;
+            box-shadow: var(--shadow-glow);
+            animation: logoPulse 3s ease-in-out infinite;
         }
 
-        .stat-card-icon.blue { background: #e6f2ff; }
-        .stat-card-icon.green { background: #e6f9ed; }
-        .stat-card-icon.orange { background: #fff5e6; }
-        .stat-card-icon.red { background: #ffe6e6; }
+        @keyframes logoPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.4); }
+            50% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.6); }
+        }
 
-        .stat-card-value {
-            font-size: 28px;
+        .brand-text h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
             font-weight: 700;
-            margin-bottom: 5px;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .stat-card-label {
+        .brand-text p {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: var(--bg-glass);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            background: var(--bg-tertiary);
+            transform: translateY(-2px);
+        }
+
+        .icon-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: var(--radius-md);
+            background: var(--gradient-1);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: -1;
+        }
+
+        .icon-btn:hover::after {
+            opacity: 0.1;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 8px;
+            height: 8px;
+            background: var(--danger);
+            border-radius: 50%;
+            animation: badgePulse 2s infinite;
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            padding: 90px 16px 100px;
+            max-width: 480px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Welcome Card */
+        .welcome-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-1);
+        }
+
+        .welcome-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .welcome-avatar {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-2);
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: 0 8px 32px rgba(6, 182, 212, 0.3);
+        }
+
+        .welcome-info h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .welcome-info p {
             font-size: 13px;
-            color: var(--text-light);
+            color: var(--text-secondary);
         }
 
-        .stat-card-change {
+        .status-badge {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-            font-size: 12px;
-            padding: 4px 8px;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
             border-radius: 20px;
-            margin-top: 10px;
-        }
-
-        .stat-card-change.up {
-            background: #e6f9ed;
+            font-size: 12px;
+            font-weight: 500;
             color: var(--accent);
         }
 
-        .stat-card-change.down {
-            background: #ffe6e6;
-            color: var(--danger);
+        .status-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: statusPulse 2s infinite;
         }
 
-        /* ========== SECTIONS ========== */
-        .section {
-            background: white;
-            border-radius: 16px;
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Quick Actions Grid */
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .quick-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
             padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quick-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-1);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .quick-card:hover::before {
+            opacity: 1;
+        }
+
+        .quick-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(99, 102, 241, 0.2);
+        }
+
+        .quick-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .quick-icon::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: var(--radius-md);
+            opacity: 0.1;
+        }
+
+        .quick-card:nth-child(1) .quick-icon { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
+        .quick-card:nth-child(2) .quick-icon { background: linear-gradient(135deg, #06b6d4, #3b82f6); }
+        .quick-card:nth-child(3) .quick-icon { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+        .quick-card:nth-child(4) .quick-icon { background: linear-gradient(135deg, #10b981, #06b6d4); }
+
+        .quick-card h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .quick-card p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Stats Section */
+        .section {
+            margin-bottom: 24px;
         }
 
         .section-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .section-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--bg-glass);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
         }
 
         .section-action {
-            padding: 8px 16px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 13px;
+            font-size: 12px;
+            color: var(--primary-light);
+            font-weight: 500;
             cursor: pointer;
         }
 
-        /* ========== BOT LIST ========== */
+        /* Stats Cards */
+        .stats-row {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            scrollbar-width: none;
+        }
+
+        .stats-row::-webkit-scrollbar {
+            display: none;
+        }
+
+        .stat-item {
+            flex: 0 0 auto;
+            min-width: 140px;
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+        }
+
+        .stat-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .stat-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            margin-top: 8px;
+            padding: 4px 8px;
+            border-radius: 20px;
+        }
+
+        .stat-change.up {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent);
+        }
+
+        /* Bot List */
         .bot-list {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .bot-item {
             display: flex;
             align-items: center;
-            gap: 15px;
-            padding: 15px;
-            background: var(--bg);
-            border-radius: 12px;
+            gap: 14px;
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            padding: 14px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
         }
 
         .bot-item:hover {
-            background: var(--border);
+            border-color: rgba(99, 102, 241, 0.2);
+            transform: translateX(4px);
         }
 
-        .bot-icon {
+        .bot-avatar {
             width: 48px;
             height: 48px;
-            border-radius: 12px;
+            border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 24px;
+            position: relative;
+        }
+
+        .bot-avatar::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 14px;
+            height: 14px;
+            background: var(--accent);
+            border: 2px solid var(--bg-secondary);
+            border-radius: 50%;
+        }
+
+        .bot-avatar.warning::after {
+            background: var(--warning);
+        }
+
+        .bot-avatar.danger::after {
+            background: var(--danger);
         }
 
         .bot-info {
@@ -418,519 +538,322 @@
 
         .bot-name {
             font-weight: 600;
-            margin-bottom: 4px;
+            font-size: 14px;
+            margin-bottom: 2px;
         }
 
-        .bot-status {
+        .bot-meta {
             font-size: 12px;
-            color: var(--text-light);
+            color: var(--text-muted);
         }
 
         .bot-stats {
             text-align: right;
         }
 
-        .bot-stats-value {
+        .bot-stat-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 18px;
             font-weight: 600;
-            font-size: 14px;
         }
 
-        .bot-stats-label {
-            font-size: 11px;
-            color: var(--text-light);
+        .bot-stat-label {
+            font-size: 10px;
+            color: var(--text-muted);
         }
 
-        /* ========== ANNOUNCEMENT CARDS ========== */
-        .announcement-list {
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .announcement-item {
-            display: flex;
-            gap: 15px;
-            padding: 15px;
-            background: var(--bg);
-            border-radius: 12px;
-            border-left: 4px solid var(--secondary);
-        }
-
-        .announcement-icon {
-            width: 40px;
-            height: 40px;
-            background: white;
-            border-radius: 10px;
-            display: flex;
+            justify-content: space-around;
             align-items: center;
-            justify-content: center;
-            font-size: 20px;
+            padding: 0 20px;
+            z-index: 100;
         }
 
-        .announcement-content {
-            flex: 1;
-        }
-
-        .announcement-title {
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .announcement-meta {
-            font-size: 12px;
-            color: var(--text-light);
-        }
-
-        .announcement-stats {
-            text-align: right;
-        }
-
-        /* ========== QUICK ACTIONS ========== */
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .quick-action {
+        .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
-            padding: 20px 10px;
-            background: white;
-            border-radius: 16px;
+            gap: 4px;
+            padding: 8px 16px;
             cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border-radius: var(--radius-md);
         }
 
-        .quick-action:hover {
+        .nav-item:hover {
+            background: var(--bg-glass);
+        }
+
+        .nav-item.active {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .nav-item.active .nav-icon {
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-icon {
+            font-size: 22px;
+            transition: transform 0.3s;
+        }
+
+        .nav-item:hover .nav-icon {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        .quick-action-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-        }
-
-        .quick-action-icon.blue { background: #e6f2ff; }
-        .quick-action-icon.green { background: #e6f9ed; }
-        .quick-action-icon.orange { background: #fff5e6; }
-        .quick-action-icon.purple { background: #f0e6ff; }
-
-        .quick-action-label {
-            font-size: 12px;
+        .nav-label {
+            font-size: 10px;
             font-weight: 500;
-            text-align: center;
+            color: var(--text-muted);
         }
 
-        /* ========== RESPONSIVE ========== */
+        .nav-item.active .nav-label {
+            color: var(--primary-light);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+
+        /* Responsive */
         @media (min-width: 768px) {
-            .stats-grid {
+            .main {
+                max-width: 600px;
+            }
+            
+            .quick-grid {
                 grid-template-columns: repeat(4, 1fr);
             }
-
-            .sidebar {
-                transform: translateX(0);
-                width: 260px;
-            }
-
-            .main {
-                margin-left: 260px;
-            }
-
-            .menu-toggle {
-                display: none;
-            }
-
-            .overlay {
-                display: none;
-            }
-        }
-
-        /* ========== ANIMATIONS ========== */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .section {
-            animation: fadeIn 0.3s ease;
-        }
-
-        /* ========== LOADING ========== */
-        .loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 200px;
-        }
-
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--border);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <!-- Overlay -->
-    <div class="overlay" id="overlay"></div>
-
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="sidebar-logo">
-                <div class="sidebar-logo-icon">🤖</div>
-                <div class="sidebar-logo-text">
+    <div class="bg-animation"></div>
+    
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-brand">
+                <div class="logo">🤖</div>
+                <div class="brand-text">
                     <h1>MESA KIMI</h1>
-                    <p>Yönetim Paneli</p>
+                    <p>ULTRA PREMIUM</p>
                 </div>
             </div>
-        </div>
+            <div class="header-actions">
+                <button class="icon-btn">
+                    🔍
+                </button>
+                <button class="icon-btn">
+                    🔔
+                    <span class="notification-badge"></span>
+                </button>
+                <button class="icon-btn">
+                    ⚙️
+                </button>
+            </div>
+        </header>
 
-        <div class="sidebar-user">
-            <div class="sidebar-user-info">
-                <div class="sidebar-user-avatar">👤</div>
-                <div class="sidebar-user-details">
-                    <h3>Admin</h3>
-                    <p>Full Access</p>
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Welcome Card -->
+            <div class="welcome-card animate-in">
+                <div class="welcome-header">
+                    <div class="welcome-avatar">👤</div>
+                    <div class="welcome-info">
+                        <h2>Hoş Geldiniz, Admin</h2>
+                        <p>Full Access • Son giriş: Az önce</p>
+                    </div>
+                </div>
+                <span class="status-badge">🟢 Sistem Aktif</span>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-grid">
+                <div class="quick-card animate-in delay-1" onclick="showPage('announcements')">
+                    <div class="quick-icon">📢</div>
+                    <h3>Duyurular</h3>
+                    <p>12 aktif duyuru</p>
+                </div>
+                <div class="quick-card animate-in delay-2" onclick="showPage('bots')">
+                    <div class="quick-icon">🤖</div>
+                    <h3>Botlar</h3>
+                    <p>16/18 aktif</p>
+                </div>
+                <div class="quick-card animate-in delay-3" onclick="showPage('users')">
+                    <div class="quick-icon">👥</div>
+                    <h3>Kullanıcılar</h3>
+                    <p>1,247 kayıtlı</p>
+                </div>
+                <div class="quick-card animate-in delay-4" onclick="showPage('analytics')">
+                    <div class="quick-icon">📈</div>
+                    <h3>Analitik</h3>
+                    <p>Detaylı raporlar</p>
                 </div>
             </div>
-        </div>
 
-        <nav class="sidebar-nav">
-            <div class="sidebar-nav-title">Ana Menü</div>
-            <div class="sidebar-nav-item active" data-page="dashboard">
-                <i>📊</i>
-                <span>Dashboard</span>
-            </div>
-            <div class="sidebar-nav-item" data-page="bots">
-                <i>🤖</i>
-                <span>Bot Yönetimi</span>
-            </div>
-            <div class="sidebar-nav-item" data-page="announcements">
-                <i>📢</i>
-                <span>Duyurular</span>
-            </div>
-            <div class="sidebar-nav-item" data-page="users">
-                <i>👥</i>
-                <span>Kullanıcılar</span>
-            </div>
-
-            <div class="sidebar-nav-title">Raporlar</div>
-            <div class="sidebar-nav-item" data-page="analytics">
-                <i>📈</i>
-                <span>Analitik</span>
-            </div>
-            <div class="sidebar-nav-item" data-page="logs">
-                <i>📋</i>
-                <span>Sistem Logları</span>
+            <!-- Stats -->
+            <div class="section animate-in delay-2">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="section-title-icon">📊</span>
+                        Canlı İstatistikler
+                    </h2>
+                    <span class="section-action">Tümü →</span>
+                </div>
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="stat-value">1,247</div>
+                        <div class="stat-label">Toplam Kullanıcı</div>
+                        <span class="stat-change up">↑ +89</span>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">45K</div>
+                        <div class="stat-label">Toplam Mesaj</div>
+                        <span class="stat-change up">↑ +453</span>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">1.2s</div>
+                        <div class="stat-label">Yanıt Süresi</div>
+                        <span class="stat-change up">↑ -0.3s</span>
+                    </div>
+                </div>
             </div>
 
-            <div class="sidebar-nav-title">Sistem</div>
-            <div class="sidebar-nav-item" data-page="settings">
-                <i>⚙️</i>
-                <span>Ayarlar</span>
+            <!-- Bot List -->
+            <div class="section animate-in delay-3">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="section-title-icon">🤖</span>
+                        Sektör Botları
+                    </h2>
+                    <span class="section-action">Yönet →</span>
+                </div>
+                <div class="bot-list">
+                    <div class="bot-item" onclick="showBotDetail('egitim')">
+                        <div class="bot-avatar" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">🎓</div>
+                        <div class="bot-info">
+                            <div class="bot-name">MESA Eğitim</div>
+                            <div class="bot-meta">127 kullanıcı aktif</div>
+                        </div>
+                        <div class="bot-stats">
+                            <div class="bot-stat-value">453</div>
+                            <div class="bot-stat-label">mesaj/gün</div>
+                        </div>
+                    </div>
+                    <div class="bot-item" onclick="showBotDetail('saglik')">
+                        <div class="bot-avatar" style="background: linear-gradient(135deg, #10b981, #06b6d4);">🩺</div>
+                        <div class="bot-info">
+                            <div class="bot-name">MESA Sağlık</div>
+                            <div class="bot-meta">89 kullanıcı aktif</div>
+                        </div>
+                        <div class="bot-stats">
+                            <div class="bot-stat-value">312</div>
+                            <div class="bot-stat-label">mesaj/gün</div>
+                        </div>
+                    </div>
+                    <div class="bot-item" onclick="showBotDetail('finans')">
+                        <div class="bot-avatar warning" style="background: linear-gradient(135deg, #f59e0b, #ef4444);">💰</div>
+                        <div class="bot-info">
+                            <div class="bot-name">MESA Finans</div>
+                            <div class="bot-meta">⚠️ Sınırlı mod</div>
+                        </div>
+                        <div class="bot-stats">
+                            <div class="bot-stat-value">567</div>
+                            <div class="bot-stat-label">mesaj/gün</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <div class="nav-item active" onclick="navigate('home')">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">Ana Sayfa</span>
+            </div>
+            <div class="nav-item" onclick="navigate('bots')">
+                <span class="nav-icon">🤖</span>
+                <span class="nav-label">Botlar</span>
+            </div>
+            <div class="nav-item" onclick="navigate('announcements')">
+                <span class="nav-icon">📢</span>
+                <span class="nav-label">Duyurular</span>
+            </div>
+            <div class="nav-item" onclick="navigate('profile')">
+                <span class="nav-icon">👤</span>
+                <span class="nav-label">Profil</span>
             </div>
         </nav>
-
-        <div class="sidebar-footer">
-            <div class="sidebar-footer-item">
-                <i>🆘</i>
-                <span>Destek</span>
-            </div>
-            <div class="sidebar-footer-item">
-                <i>🚪</i>
-                <span>Çıkış</span>
-            </div>
-        </div>
-    </aside>
-
-    <!-- Header -->
-    <header class="header">
-        <div class="header-left">
-            <button class="menu-toggle" id="menuToggle">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            <h1 class="header-title">Dashboard</h1>
-        </div>
-        <div class="header-right">
-            <button class="header-btn">🔔</button>
-            <button class="header-btn">⚙️</button>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="main">
-        <!-- Quick Actions -->
-        <div class="quick-actions">
-            <div class="quick-action" onclick="showPage('announcements')">
-                <div class="quick-action-icon blue">📢</div>
-                <span class="quick-action-label">Duyuru</span>
-            </div>
-            <div class="quick-action" onclick="showPage('bots')">
-                <div class="quick-action-icon green">🤖</div>
-                <span class="quick-action-label">Botlar</span>
-            </div>
-            <div class="quick-action" onclick="showPage('users')">
-                <div class="quick-action-icon orange">👥</div>
-                <span class="quick-action-label">Kullanıcı</span>
-            </div>
-            <div class="quick-action" onclick="showPage('analytics')">
-                <div class="quick-action-icon purple">📈</div>
-                <span class="quick-action-label">Rapor</span>
-            </div>
-        </div>
-
-        <!-- Stats Grid -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-card-header">
-                    <div class="stat-card-icon blue">👥</div>
-                </div>
-                <div class="stat-card-value">1,247</div>
-                <div class="stat-card-label">Toplam Kullanıcı</div>
-                <div class="stat-card-change up">
-                    <span>↑</span> +89 bugün
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-card-header">
-                    <div class="stat-card-icon green">💬</div>
-                </div>
-                <div class="stat-card-value">45,231</div>
-                <div class="stat-card-label">Toplam Mesaj</div>
-                <div class="stat-card-change up">
-                    <span>↑</span> +453 bugün
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-card-header">
-                    <div class="stat-card-icon orange">🤖</div>
-                </div>
-                <div class="stat-card-value">16/18</div>
-                <div class="stat-card-label">Aktif Bot</div>
-                <div class="stat-card-change down">
-                    <span>↓</span> 2 bot bakımda
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-card-header">
-                    <div class="stat-card-icon red">⚡</div>
-                </div>
-                <div class="stat-card-value">1.2s</div>
-                <div class="stat-card-label">Ort. Yanıt Süresi</div>
-                <div class="stat-card-change up">
-                    <span>↑</span> -0.3s
-                </div>
-            </div>
-        </div>
-
-        <!-- Bot List Section -->
-        <div class="section">
-            <div class="section-header">
-                <h2 class="section-title">🤖 Sektör Botları</h2>
-                <button class="section-action">Tümünü Gör</button>
-            </div>
-            <div class="bot-list">
-                <div class="bot-item">
-                    <div class="bot-icon" style="background: #e6f2ff;">🎓</div>
-                    <div class="bot-info">
-                        <div class="bot-name">MESA Eğitim</div>
-                        <div class="bot-status">🟢 Çevrimiçi • 127 kullanıcı</div>
-                    </div>
-                    <div class="bot-stats">
-                        <div class="bot-stats-value">453</div>
-                        <div class="bot-stats-label">mesaj/gün</div>
-                    </div>
-                </div>
-
-                <div class="bot-item">
-                    <div class="bot-icon" style="background: #e6f9ed;">🩺</div>
-                    <div class="bot-info">
-                        <div class="bot-name">MESA Sağlık</div>
-                        <div class="bot-status">🟢 Çevrimiçi • 89 kullanıcı</div>
-                    </div>
-                    <div class="bot-stats">
-                        <div class="bot-stats-value">312</div>
-                        <div class="bot-stats-label">mesaj/gün</div>
-                    </div>
-                </div>
-
-                <div class="bot-item">
-                    <div class="bot-icon" style="background: #ffe6e6;">⚖️</div>
-                    <div class="bot-info">
-                        <div class="bot-name">MESA Hukuk</div>
-                        <div class="bot-status">🟢 Çevrimiçi • 56 kullanıcı</div>
-                    </div>
-                    <div class="bot-stats">
-                        <div class="bot-stats-value">198</div>
-                        <div class="bot-stats-label">mesaj/gün</div>
-                    </div>
-                </div>
-
-                <div class="bot-item">
-                    <div class="bot-icon" style="background: #fff5e6;">💰</div>
-                    <div class="bot-info">
-                        <div class="bot-name">MESA Finans</div>
-                        <div class="bot-status">🟡 Sınırlı • 234 kullanıcı</div>
-                    </div>
-                    <div class="bot-stats">
-                        <div class="bot-stats-value">567</div>
-                        <div class="bot-stats-label">mesaj/gün</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Announcements Section -->
-        <div class="section">
-            <div class="section-header">
-                <h2 class="section-title">📢 Son Duyurular</h2>
-                <button class="section-action">Yeni Duyuru</button>
-            </div>
-            <div class="announcement-list">
-                <div class="announcement-item">
-                    <div class="announcement-icon">🎉</div>
-                    <div class="announcement-content">
-                        <div class="announcement-title">Yeni KBN Karakterleri Eklendi!</div>
-                        <div class="announcement-meta">24 Şubat 2026 • 1,543 görüntüleme</div>
-                    </div>
-                    <div class="announcement-stats">
-                        <div class="bot-stats-value">89</div>
-                        <div class="bot-stats-label">etkileşim</div>
-                    </div>
-                </div>
-
-                <div class="announcement-item">
-                    <div class="announcement-icon">🔧</div>
-                    <div class="announcement-content">
-                        <div class="announcement-title">Planlı Bakım Bildirimi</div>
-                        <div class="announcement-meta">22 Şubat 2026 • 892 görüntüleme</div>
-                    </div>
-                    <div class="announcement-stats">
-                        <div class="bot-stats-value">45</div>
-                        <div class="bot-stats-label">etkileşim</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
+    </div>
 
     <script>
-        // Telegram Web App initialization
+        // Telegram Web App
         let tg = null;
         if (window.Telegram && window.Telegram.WebApp) {
             tg = window.Telegram.WebApp;
             tg.ready();
             tg.expand();
             
-            // Set header color
-            tg.setHeaderColor('#1a365d');
-            tg.setBackgroundColor('#f7fafc');
+            // Theme colors
+            tg.setHeaderColor('#0f172a');
+            tg.setBackgroundColor('#0f172a');
         }
 
-        // DOM Elements
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-        const menuToggle = document.getElementById('menuToggle');
-        const navItems = document.querySelectorAll('.sidebar-nav-item');
-        const headerTitle = document.querySelector('.header-title');
-
-        // Toggle sidebar
-        menuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
-        });
-
-        // Close sidebar when clicking overlay
-        overlay.addEventListener('click', () => {
-            sidebar.classList.remove('active');
-            overlay.classList.remove('active');
-        });
-
         // Navigation
-        navItems.forEach(item => {
-            item.addEventListener('click', () => {
-                // Remove active class from all
-                navItems.forEach(i => i.classList.remove('active'));
-                // Add active class to clicked
-                item.classList.add('active');
-                
-                // Update header title
-                const page = item.dataset.page;
-                const titles = {
-                    dashboard: 'Dashboard',
-                    bots: 'Bot Yönetimi',
-                    announcements: 'Duyurular',
-                    users: 'Kullanıcılar',
-                    analytics: 'Analitik',
-                    logs: 'Sistem Logları',
-                    settings: 'Ayarlar'
-                };
-                headerTitle.textContent = titles[page] || 'Dashboard';
-                
-                // Close sidebar on mobile
-                sidebar.classList.remove('active');
-                overlay.classList.remove('active');
-                
-                // Send data to bot if in Telegram
-                if (tg) {
-                    tg.sendData(JSON.stringify({ action: 'navigate', page: page }));
-                }
-            });
-        });
-
-        // Show page function
-        function showPage(page) {
-            const titles = {
-                announcements: 'Duyurular',
-                bots: 'Bot Yönetimi',
-                users: 'Kullanıcılar',
-                analytics: 'Analitik'
-            };
-            headerTitle.textContent = titles[page] || 'Dashboard';
-            
-            // Update active nav item
-            navItems.forEach(item => {
+        function navigate(page) {
+            document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
-                if (item.dataset.page === page) {
-                    item.classList.add('active');
-                }
             });
+            event.currentTarget.classList.add('active');
             
             if (tg) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
+        }
+
+        function showPage(page) {
+            if (tg) {
+                tg.HapticFeedback.impactOccurred('medium');
                 tg.sendData(JSON.stringify({ action: 'navigate', page: page }));
             }
         }
 
-        // Handle main button if in Telegram
-        if (tg) {
-            tg.MainButton.setText('İşlem Tamamla');
-            tg.MainButton.onClick(() => {
-                tg.close();
-            });
+        function showBotDetail(bot) {
+            if (tg) {
+                tg.HapticFeedback.impactOccurred('medium');
+            }
         }
     </script>
 </body>
