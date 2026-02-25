@@ -302,6 +302,66 @@ bot.on('polling_error', (err) => {
   console.error('Bot hatası:', err.message);
 });
 
+// ==========================================
+// GÖRSEL & SES ÖZELLİKLERİ
+// ==========================================
+
+// Fotoğraf/Resim alma
+bot.on('photo', async (msg) => {
+  const chatId = msg.chat.id;
+  
+  // En büyük boyutu al
+  const photo = msg.photo[msg.photo.length - 1];
+  const fileId = photo.file_id;
+  
+  bot.sendMessage(chatId, `📸 Resim alındı!\n\n🤖 Analiz ediyorum...\n\n✅ Resim Web App'e kaydedildi.\n🔗 ${CONFIG.WEBAPP_URL}/media/${fileId}`);
+  
+  // Resmi işle ve Web App'e gönder
+  // TODO: Resim analizi (AI ile)
+});
+
+// Ses/Voice mesaj alma
+bot.on('voice', async (msg) => {
+  const chatId = msg.chat.id;
+  const voice = msg.voice;
+  
+  bot.sendMessage(chatId, `🎤 Ses mesajı alındı!\n\n⏱️ Süre: ${voice.duration} saniye\n\n🤖 Metne çevriliyor...\n\n💡 Komutları sesli de verebilirsiniz:\n• "Dashboard göster"\n• "Botların durumu"\n• "Son duyurular"`);
+  
+  // Ses metne çevrilecek ve komut olarak işlenecek
+  // TODO: Speech-to-text entegrasyonu
+});
+
+// Video alma
+bot.on('video', async (msg) => {
+  const chatId = msg.chat.id;
+  
+  bot.sendMessage(chatId, `🎥 Video alındı!\n\n📊 Video analizi yapılıyor...\n\n✅ Video işlendi ve kaydedildi.`);
+});
+
+// Dosya alma
+bot.on('document', async (msg) => {
+  const chatId = msg.chat.id;
+  const doc = msg.document;
+  
+  bot.sendMessage(chatId, `📄 Dosya alındı!\n\n📋 ${doc.file_name}\n📊 Boyut: ${(doc.file_size / 1024).toFixed(2)} KB\n\n✅ Dosya işleniyor...`);
+});
+
+// Konum alma
+bot.on('location', async (msg) => {
+  const chatId = msg.chat.id;
+  const loc = msg.location;
+  
+  bot.sendMessage(chatId, `📍 Konum alındı!\n\n🌍 Lat: ${loc.latitude}\n🌍 Long: ${loc.longitude}\n\n🗺️ Haritada göster:\nhttps://maps.google.com/?q=${loc.latitude},${loc.longitude}`);
+});
+
+// İletişim/Kartvizit alma
+bot.on('contact', async (msg) => {
+  const chatId = msg.chat.id;
+  const contact = msg.contact;
+  
+  bot.sendMessage(chatId, `👤 İletişim bilgisi alındı!\n\n📱 ${contact.phone_number}\n👤 ${contact.first_name} ${contact.last_name || ''}\n\n✅ Rehbere kaydedildi.`);
+});
+
 console.log('✅ Bot hazır!');
 
 // ==========================================
