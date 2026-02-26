@@ -80,7 +80,6 @@ async function testDB() {
 // ==========================================
 
 // MESA_BOTS artık bots.js'den geliyor - burada tekrar tanımlama!
-];
 
 // ==========================================
 // API ENDPOINTLERİ
