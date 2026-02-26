@@ -76,28 +76,10 @@ async function testDB() {
 }
 
 // ==========================================
-// 18 MESA BOTU
+// 18 MESA BOTU (bots.js'den import edildi)
 // ==========================================
 
-const MESA_BOTS = [
-  { id: 'egitim', name: 'MESA Eğitim', username: '@MesaEgitim_Bot', sector: 'Eğitim', icon: '🎓', color: '#6366f1' },
-  { id: 'saglik', name: 'MESA Sağlık', username: '@MesaSaglik_Bot', sector: 'Sağlık', icon: '🩺', color: '#10b981' },
-  { id: 'hukuk', name: 'MESA Hukuk', username: '@MesaHukuk_Bot', sector: 'Hukuk', icon: '⚖️', color: '#ef4444' },
-  { id: 'finans', name: 'MESA Finans', username: '@MesaFinans_Bot', sector: 'Finans', icon: '💰', color: '#f59e0b' },
-  { id: 'muhendislik', name: 'MESA Mühendislik', username: '@MesaMuhendis_Bot', sector: 'Mühendislik', icon: '🔧', color: '#0ea5e9' },
-  { id: 'tarim', name: 'MESA Tarım', username: '@MesaTarim_Bot', sector: 'Tarım', icon: '🌾', color: '#84cc16' },
-  { id: 'turizm', name: 'MESA Turizm', username: '@MesaTurizm_Bot', sector: 'Turizm', icon: '✈️', color: '#8b5cf6' },
-  { id: 'sanat', name: 'MESA Sanat', username: '@MesaSanat_Bot', sector: 'Sanat', icon: '🎨', color: '#ec4899' },
-  { id: 'teknoloji', name: 'MESA Teknoloji', username: '@MesaTeknoloji_Bot', sector: 'Teknoloji', icon: '💻', color: '#06b6d4' },
-  { id: 'enerji', name: 'MESA Enerji', username: '@MesaEnerji_Bot', sector: 'Enerji', icon: '⚡', color: '#eab308' },
-  { id: 'gayrimenkul', name: 'MESA Gayrimenkul', username: '@MesaGayrimenkul_Bot', sector: 'Gayrimenkul', icon: '🏠', color: '#14b8a6' },
-  { id: 'medya', name: 'MESA Medya', username: '@MesaMedya_Bot', sector: 'Medya', icon: '📺', color: '#f97316' },
-  { id: 'lojistik', name: 'MESA Lojistik', username: '@MesaLojistik_Bot', sector: 'Lojistik', icon: '🚚', color: '#64748b' },
-  { id: 'perakende', name: 'MESA Perakende', username: '@MesaPerakende_Bot', sector: 'Perakende', icon: '🛒', color: '#db2777' },
-  { id: 'uretim', name: 'MESA Üretim', username: '@MesaUretim_Bot', sector: 'Üretim', icon: '🏭', color: '#7c3aed' },
-  { id: 'insaat', name: 'MESA İnşaat', username: '@MesaInsaat_Bot', sector: 'İnşaat', icon: '🏗️', color: '#dc2626' },
-  { id: 'genel', name: 'MESA Genel', username: '@MesAkademi_Bot', sector: 'Genel', icon: '🤖', color: '#3b82f6' },
-  { id: 'yonetim', name: 'MESA Yönetim', username: '@AkademiMes_Bot', sector: 'Yönetim', icon: '👑', color: '#1e293b' }
+// MESA_BOTS artık bots.js'den geliyor - burada tekrar tanımlama!
 ];
 
 // ==========================================
