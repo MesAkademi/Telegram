@@ -283,37 +283,46 @@ async function broadcastToAll(message) {
   }
   
   try {
-    // Her botun kullanıcılarını çek
-    for (const [botId, { bot, config }] of botInstances) {
+    // Tüm kullanıcıları çek (sadece ana bottan)
+    const usersResult = await pool.query(`
+      SELECT telegram_id FROM mesa.users WHERE telegram_id IS NOT NULL
+    `);
+    
+    console.log(`📢 Toplam ${usersResult.rows.length} kullanıcıya duyuru gönderiliyor...`);
+    
+    // Ana bot ile gönder (16 bot yerine sadece ana bot)
+    const mainBot = bot;
+    let sent = 0;
+    let failed = 0;
+    
+    for (const user of usersResult.rows) {
       try {
-        const usersResult = await pool.query(`
-          SELECT DISTINCT u.telegram_id 
-          FROM mesa.users u
-          JOIN mesa.telegram_messages m ON m.user_id = u.telegram_id
-          WHERE m.bot_id = $1
-        `, [botId]);
+        await mainBot.sendMessage(user.telegram_id, 
+          `📢 **Duyuru**\n\n${message}\n\n_MESA KIMI_`,
+          { parse_mode: 'Markdown' }
+        );
+        sent++;
         
-        let sent = 0;
-        let failed = 0;
-        
-        for (const user of usersResult.rows) {
-          try {
-            await bot.sendMessage(user.telegram_id, 
-              `📢 **Duyuru**\n\n${message}\n\n_${config.name}_`,
-              { parse_mode: 'Markdown' }
-            );
-            sent++;
-          } catch (err) {
-            failed++;
-          }
+        // Rate limit için bekle
+        if (sent % 30 === 0) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
         }
-        
-        results.push({ bot: botId, status: 'ok', sent, failed, total: usersResult.rows.length });
       } catch (err) {
-        results.push({ bot: botId, status: 'error', error: err.message });
+        console.error(`❌ Kullanıcı ${user.telegram_id}:`, err.message);
+        failed++;
       }
     }
+    
+    results.push({ bot: 'main', status: 'ok', sent, failed, total: usersResult.rows.length });
+    
+    // Duyuruyu kaydet
+    await pool.query(`
+      INSERT INTO mesa.announcements (title, content, sent_to)
+      VALUES ('Toplu Duyuru', $1, $2)
+    `, [message, sent]);
+    
   } catch (err) {
+    console.error('❌ Broadcast hatası:', err);
     results.push({ status: 'error', error: err.message });
   }
   
@@ -334,20 +343,24 @@ bot.onText(/\/start/, async (msg) => {
   const user = msg.from;
   
   // Kullanıcıyı kaydet
-  if (dbConnected) {
+  if (dbConnected && user) {
     try {
       await pool.query(`
-        INSERT INTO mesa.users (telegram_id, username, first_name, last_name)
-        VALUES ($1, $2, $3, $4)
+        INSERT INTO mesa.users (telegram_id, username, first_name, last_name, last_active)
+        VALUES ($1, $2, $3, $4, NOW())
         ON CONFLICT (telegram_id) DO UPDATE SET
+          username = EXCLUDED.username,
+          first_name = EXCLUDED.first_name,
+          last_name = EXCLUDED.last_name,
           last_active = NOW()
       `, [user.id, user.username, user.first_name, user.last_name]);
+      console.log(`✅ Kullanıcı kaydedildi: ${user.first_name} (${user.id})`);
     } catch (err) {
-      console.error('Kullanıcı kayıt hatası:', err);
+      console.error('❌ Kullanıcı kayıt hatası:', err.message);
     }
   }
   
-  const text = `Merhaba ${user.first_name}! 👋\n\n🤖 MESA KIMI - Premium Yönetim Paneli\n\n📊 Dashboard\n🤖 16 sektör botu\n📢 Duyurular\n👥 Kullanıcılar`;
+  const text = `Merhaba ${user.first_name || 'Kullanıcı'}! 👋\n\n🤖 MESA KIMI - Premium Yönetim Paneli\n\nAşağıdaki menüden işlem seçin:`;
   
   const keyboard = {
     reply_markup: {
@@ -356,7 +369,8 @@ bot.onText(/\/start/, async (msg) => {
         ['📢 Duyurular', '👥 Kullanıcılar'],
         ['📢 Toplu Duyuru', 'ℹ️ Yardım']
       ],
-      resize_keyboard: true
+      resize_keyboard: true,
+      one_time_keyboard: false
     }
   };
   
