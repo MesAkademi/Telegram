@@ -18,7 +18,7 @@ app.use(express.static(path.join(__dirname)));
 // ==========================================
 
 const CONFIG = {
-  DATABASE_URL: process.env.DATABASE_URL || 'postgres://postgres:zgUFYb7X64GeaS74n4cz4xwNa4wtal1O8q2NFQ1NWnT5u2hFkX5J7yL5DfsYOssj@postgresql-database-z0848sg4oocsk8o8kswwks00:5432/postgres',
+  DATABASE_URL: process.env.DATABASE_URL || 'postgres://postgres:zgUFYb7X64GeaS74n4cz4xwNa4wtal1O8q2NFQ1NWnT5u2hFkX5J7yL5DfsYOssj@z0848sg4oocsk8o8kswwks00:5432/postgres',
   BOT_TOKEN: process.env.BOT_TOKEN || '8568828893:AAGSNh5FYXx-Y1khFtHlEQLDGikVLesC1Wg',
   WEBAPP_URL: process.env.WEBAPP_URL || 'https://telegram.mesakademi.com.tr',
   PORT: process.env.PORT || 3000
