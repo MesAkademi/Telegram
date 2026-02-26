@@ -146,22 +146,22 @@ async function initDB() {
 // ==========================================
 
 const MESA_BOTS = [
-  { id: 'egitim', name: 'MESA Eğitim', username: '@MesaEgitimBot', token: '8212700834:AAFxVKW9rUoqEkj29PY-ZXmAvzZ9-SnxsNw', sector: 'Eğitim', icon: '🎓' },
-  { id: 'saglik', name: 'MESA Sağlık', username: '@MesaSaglikBot', token: '8161143511:AAHTC9id6RFHhO-XjTgvSQrsM0XIeqSxeNc', sector: 'Sağlık', icon: '🩺' },
-  { id: 'hukuk', name: 'MESA Hukuk', username: '@MesaHukukBot', token: '8519596332:AAF0rBB51aDmK3c0TOvll1JfN2RyrnonbeA', sector: 'Hukuk', icon: '⚖️' },
-  { id: 'finans', name: 'MESA Finans', username: '@MesaFinansBot', token: '8215909476:AAHn9YmZ5RVCdHnhfeP6cxMu29TUWOQWVUA', sector: 'Finans', icon: '💰' },
-  { id: 'muhendislik', name: 'MESA Mühendislik', username: '@MesaMuhendisBot', token: '8491998160:AAFR0iJLm9jpnLtKa702W5k-H3Z3L4Ujf-U', sector: 'Mühendislik', icon: '🔧' },
-  { id: 'tarim', name: 'MESA Tarım', username: '@MesaTarimBot', token: '8326466961:AAHs7ol5ac38kxG0NAPgZlc_CSUR4izoSJM', sector: 'Tarım', icon: '🌾' },
-  { id: 'turizm', name: 'MESA Turizm', username: '@MesaTurizmBot', token: '8291223922:AAElYxWxxGXN7miizmxcV6bDQznabVVeY30', sector: 'Turizm', icon: '✈️' },
-  { id: 'gayrimenkul', name: 'MESA Gayrimenkul', username: '@MesaGayrimenkulBot', token: '8258876471:AAF5Yktd3vlFVhM6O_oLNRQwFAHHaMgLBRQ', sector: 'Gayrimenkul', icon: '🏠' },
-  { id: 'enerji', name: 'MESA Enerji', username: '@MesaEnerjiBot', token: '8573709800:AAFtvzaZ2e7tYAmCFNF_dz80W0HVrDI5PfU', sector: 'Enerji', icon: '⚡' },
-  { id: 'medya', name: 'MESA Medya', username: '@MesaMedyaBot', token: '7528780351:AAE74JVNpdWuVhlEx793DArFH41SP3vtrdk', sector: 'Medya', icon: '📺' },
-  { id: 'lojistik', name: 'MESA Lojistik', username: '@MesaLojistikBot', token: '8053649301:AAELqQCcVBWcLOaDx47DWyustVZ4QgtSHQk', sector: 'Lojistik', icon: '🚚' },
-  { id: 'perakende', name: 'MESA Perakende', username: '@MesaPerakendeBot', token: '8588528944:AAF3dzcCFWBWK3tX0ewyHb1DJ94vMaoNMRo', sector: 'Perakende', icon: '🛒' },
-  { id: 'uretim', name: 'MESA Üretim', username: '@MesaUretimBot', token: '7686176749:AAEYEceBak0hxaR0ahmG5te4imazlzQ6_XE', sector: 'Üretim', icon: '🏭' },
-  { id: 'insaat', name: 'MESA İnşaat', username: '@MesaInsaatBot', token: '8278000430:AAGwkGEpPFmPG1yKRzgzvWDlQPz7nIEihL0', sector: 'İnşaat', icon: '🏗️' },
-  { id: 'teknoloji', name: 'MESA Teknoloji', username: '@MesaTeknolojiBot', token: '8213833732:AAHM71jIc1zR88-JjJ6UkGXag8mZytOjAuA', sector: 'Teknoloji', icon: '💻' },
-  { id: 'sanat', name: 'MESA Sanat', username: '@MesaSanatBot', token: '8516343086:AAFrHIst6tEum7Snam-w6nIn0-u7NpNW76E', sector: 'Sanat', icon: '🎨' }
+  { id: 'egitim', name: 'MESA Eğitim', username: '@MesaEgitim_bot', token: '8212700834:AAFxVKW9rUoqEkj29PY-ZXmAvzZ9-SnxsNw', sector: 'Eğitim', icon: '🎓' },
+  { id: 'saglik', name: 'MESA Sağlık', username: '@MesaSaglik_bot', token: '8161143511:AAHTC9id6RFHhO-XjTgvSQrsM0XIeqSxeNc', sector: 'Sağlık', icon: '🩺' },
+  { id: 'hukuk', name: 'MESA Hukuk', username: '@MesaHukuk_bot', token: '8519596332:AAF0rBB51aDmK3c0TOvll1JfN2RyrnonbeA', sector: 'Hukuk', icon: '⚖️' },
+  { id: 'finans', name: 'MESA Finans', username: '@MesaFinans_bot', token: '8215909476:AAHn9YmZ5RVCdHnhfeP6cxMu29TUWOQWVUA', sector: 'Finans', icon: '💰' },
+  { id: 'muhendislik', name: 'MESA Mühendislik', username: '@MesaMuhendis_bot', token: '8491998160:AAFR0iJLm9jpnLtKa702W5k-H3Z3L4Ujf-U', sector: 'Mühendislik', icon: '🔧' },
+  { id: 'tarim', name: 'MESA Tarım', username: '@MesaTarim_bot', token: '8326466961:AAHs7ol5ac38kxG0NAPgZlc_CSUR4izoSJM', sector: 'Tarım', icon: '🌾' },
+  { id: 'turizm', name: 'MESA Turizm', username: '@MesaTurizm_bot', token: '8291223922:AAElYxWxxGXN7miizmxcV6bDQznabVVeY30', sector: 'Turizm', icon: '✈️' },
+  { id: 'gayrimenkul', name: 'MESA Gayrimenkul', username: '@MesaGayrimenkul_bot', token: '8258876471:AAF5Yktd3vlFVhM6O_oLNRQwFAHHaMgLBRQ', sector: 'Gayrimenkul', icon: '🏠' },
+  { id: 'enerji', name: 'MESA Enerji', username: '@MesaEnerji_bot', token: '8573709800:AAFtvzaZ2e7tYAmCFNF_dz80W0HVrDI5PfU', sector: 'Enerji', icon: '⚡' },
+  { id: 'medya', name: 'MESA Medya', username: '@MesaMedya_bot', token: '7528780351:AAE74JVNpdWuVhlEx793DArFH41SP3vtrdk', sector: 'Medya', icon: '📺' },
+  { id: 'lojistik', name: 'MESA Lojistik', username: '@MesaLojistik_bot', token: '8053649301:AAELqQCcVBWcLOaDx47DWyustVZ4QgtSHQk', sector: 'Lojistik', icon: '🚚' },
+  { id: 'perakende', name: 'MESA Perakende', username: '@MesaPerakende_bot', token: '8588528944:AAF3dzcCFWBWK3tX0ewyHb1DJ94vMaoNMRo', sector: 'Perakende', icon: '🛒' },
+  { id: 'uretim', name: 'MESA Üretim', username: '@MesaUretim_bot', token: '7686176749:AAEYEceBak0hxaR0ahmG5te4imazlzQ6_XE', sector: 'Üretim', icon: '🏭' },
+  { id: 'insaat', name: 'MESA İnşaat', username: '@MesaInsaat_bot', token: '8278000430:AAGwkGEpPFmPG1yKRzgzvWDlQPz7nIEihL0', sector: 'İnşaat', icon: '🏗️' },
+  { id: 'teknoloji', name: 'MESA Teknoloji', username: '@MesaTeknoloji_bot', token: '8213833732:AAHM71jIc1zR88-JjJ6UkGXag8mZytOjAuA', sector: 'Teknoloji', icon: '💻' },
+  { id: 'sanat', name: 'MESA Sanat', username: '@MesaSanat_bot', token: '8516343086:AAFrHIst6tEum7Snam-w6nIn0-u7NpNW76E', sector: 'Sanat', icon: '🎨' }
 ];
 
 // Bot instance'ları
