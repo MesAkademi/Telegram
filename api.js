@@ -272,7 +272,7 @@ app.get('/', (req, res) => {
 });
 
 // ==========================================
-// TOPLU DUYURU
+// TOPLU DUYURU - 16 BOTA
 // ==========================================
 
 async function broadcastToAll(message) {
@@ -283,43 +283,54 @@ async function broadcastToAll(message) {
   }
   
   try {
-    // Tüm kullanıcıları çek (sadece ana bottan)
+    // Tüm kullanıcıları çek
     const usersResult = await pool.query(`
       SELECT telegram_id FROM mesa.users WHERE telegram_id IS NOT NULL
     `);
     
     console.log(`📢 Toplam ${usersResult.rows.length} kullanıcıya duyuru gönderiliyor...`);
     
-    // Ana bot ile gönder (16 bot yerine sadece ana bot)
-    const mainBot = bot;
-    let sent = 0;
-    let failed = 0;
-    
-    for (const user of usersResult.rows) {
-      try {
-        await mainBot.sendMessage(user.telegram_id, 
-          `📢 **Duyuru**\n\n${message}\n\n_MESA KIMI_`,
-          { parse_mode: 'Markdown' }
-        );
-        sent++;
-        
-        // Rate limit için bekle
-        if (sent % 30 === 0) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
+    // 16 BOT'A GÖNDER
+    for (const [botId, { bot: botInstance, config }] of botInstances) {
+      let sent = 0;
+      let failed = 0;
+      
+      for (const user of usersResult.rows) {
+        try {
+          await botInstance.sendMessage(user.telegram_id, 
+            `📢 **Duyuru**\n\n${message}\n\n_${config.name}_`,
+            { parse_mode: 'Markdown' }
+          );
+          sent++;
+          
+          // Rate limit için bekle (her 20 mesajda 1 saniye)
+          if (sent % 20 === 0) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
+        } catch (err) {
+          console.error(`❌ ${config.name} - Kullanıcı ${user.telegram_id}:`, err.message);
+          failed++;
         }
-      } catch (err) {
-        console.error(`❌ Kullanıcı ${user.telegram_id}:`, err.message);
-        failed++;
       }
+      
+      results.push({ 
+        bot: config.name, 
+        username: config.username,
+        status: 'ok', 
+        sent, 
+        failed, 
+        total: usersResult.rows.length 
+      });
+      
+      console.log(`✅ ${config.name}: ${sent} gönderildi, ${failed} başarısız`);
     }
     
-    results.push({ bot: 'main', status: 'ok', sent, failed, total: usersResult.rows.length });
-    
     // Duyuruyu kaydet
+    const totalSent = results.reduce((sum, r) => sum + r.sent, 0);
     await pool.query(`
       INSERT INTO mesa.announcements (title, content, sent_to)
-      VALUES ('Toplu Duyuru', $1, $2)
-    `, [message, sent]);
+      VALUES ('Toplu Duyuru - 16 Bot', $1, $2)
+    `, [message, totalSent]);
     
   } catch (err) {
     console.error('❌ Broadcast hatası:', err);
@@ -337,7 +348,7 @@ const bot = new TelegramBot(CONFIG.BOT_TOKEN, { polling: true });
 
 console.log('🤖 Telegram Bot başlatıldı!');
 
-// /start
+// /start - YENİ TASARIM
 bot.onText(/\/start/, async (msg) => {
   const chatId = msg.chat.id;
   const user = msg.from;
@@ -360,57 +371,51 @@ bot.onText(/\/start/, async (msg) => {
     }
   }
   
-  const text = `Merhaba ${user.first_name || 'Kullanıcı'}! 👋\n\n🤖 MESA KIMI - Premium Yönetim Paneli\n\nAşağıdaki menüden işlem seçin:`;
+  const text = `🤖 **MESA KIMI**\n\n` +
+    `Merhaba ${user.first_name || 'Kullanıcı'}! 👋\n\n` +
+    `Premium Yönetim Paneline hoş geldiniz.\n\n` +
+    `📊 *İstatistikler*\n` +
+    `• 16 Sektör Botu\n` +
+    `• Toplu Duyuru Sistemi\n` +
+    `• Gerçek Zamanlı Raporlama\n\n` +
+    `Aşağıdaki menüden işlem seçin:`;
   
-  const keyboard = {
+  // YENİ TASARIM - Inline butonlar (2 kolon)
+  const inlineKeyboard = {
     reply_markup: {
-      keyboard: [
-        ['📊 Dashboard', '🤖 Botlar'],
-        ['📢 Duyurular', '👥 Kullanıcılar'],
-        ['📢 Toplu Duyuru', 'ℹ️ Yardım']
-      ],
-      resize_keyboard: true,
-      one_time_keyboard: false
+      inline_keyboard: [
+        [
+          { text: '📊 Dashboard', callback_data: 'menu_dashboard' },
+          { text: '🤖 Botlar', callback_data: 'menu_bots' }
+        ],
+        [
+          { text: '📢 Duyurular', callback_data: 'menu_announcements' },
+          { text: '👥 Kullanıcılar', callback_data: 'menu_users' }
+        ],
+        [
+          { text: '📢 Toplu Duyuru', callback_data: 'menu_broadcast' },
+          { text: 'ℹ️ Yardım', callback_data: 'menu_help' }
+        ],
+        [
+          { text: '🌐 Web Panel', url: CONFIG.WEBAPP_URL }
+        ]
+      ]
     }
   };
   
-  bot.sendMessage(chatId, text, keyboard);
+  bot.sendMessage(chatId, text, { parse_mode: 'Markdown', ...inlineKeyboard });
 });
 
-// /botlar
-bot.onText(/\/botlar/, (msg) => {
-  let text = '🤖 **MESA Sektör Botları**\n\n';
-  MESA_BOTS.forEach((b, i) => {
-    text += `${i + 1}. ${b.icon} ${b.name}\n   👤 ${b.username}\n\n`;
-  });
-  bot.sendMessage(msg.chat.id, text, { parse_mode: 'Markdown' });
-});
-
-// /toplu
-bot.onText(/\/toplu (.+)/, async (msg, match) => {
-  const chatId = msg.chat.id;
-  const message = match[1];
+// INLINE BUTON TIKLAMALARI
+bot.on('callback_query', async (query) => {
+  const chatId = query.message.chat.id;
+  const data = query.data;
+  const user = query.from;
   
-  bot.sendMessage(chatId, `📢 Toplu duyuru gönderiliyor...\n\nMesaj: ${message}`);
+  // Cevap ver ("bekliyor" işaretini kaldır)
+  bot.answerCallbackQuery(query.id);
   
-  const results = await broadcastToAll(message);
-  const success = results.filter(r => r.status === 'ok').length;
-  const totalSent = results.reduce((sum, r) => sum + (r.sent || 0), 0);
-  
-  bot.sendMessage(chatId, 
-    `✅ Duyuru tamamlandı!\n\n` +
-    `✓ Başarılı bot: ${success}\n` +
-    `📨 Gönderilen mesaj: ${totalSent}`
-  );
-});
-
-// Butonlar
-bot.on('message', async (msg) => {
-  const chatId = msg.chat.id;
-  const text = msg.text;
-  const user = msg.from;
-  
-  // Kullanıcı aktivitesini güncelle
+  // Kullanıcıyı kaydet/güncelle
   if (dbConnected && user) {
     try {
       await pool.query(`
@@ -421,7 +426,8 @@ bot.on('message', async (msg) => {
     } catch (err) {}
   }
   
-  if (text === '📊 Dashboard') {
+  // MENÜ İŞLEMLERİ
+  if (data === 'menu_dashboard') {
     try {
       if (dbConnected) {
         const result = await pool.query(`
@@ -429,34 +435,108 @@ bot.on('message', async (msg) => {
             (SELECT COUNT(*) FROM mesa.users) as users,
             (SELECT COUNT(*) FROM mesa.telegram_messages) as messages
         `);
-        const data = result.rows[0];
-        bot.sendMessage(chatId, `📊 Dashboard\n\n👥 Kullanıcı: ${data.users}\n💬 Mesaj: ${data.messages}\n🤖 Bot: 16`);
+        const d = result.rows[0];
+        bot.sendMessage(chatId, 
+          `📊 **Dashboard**\n\n` +
+          `👥 Kullanıcı: ${d.users}\n` +
+          `💬 Mesaj: ${d.messages}\n` +
+          `🤖 Aktif Bot: 16`,
+          { parse_mode: 'Markdown' }
+        );
       } else {
-        bot.sendMessage(chatId, `📊 Dashboard\n\n👥 Kullanıcı: 1,247\n💬 Mesaj: 45,231\n🤖 Bot: 16`);
+        bot.sendMessage(chatId, 
+          `📊 **Dashboard**\n\n` +
+          `👥 Kullanıcı: 1,247\n` +
+          `💬 Mesaj: 45,231\n` +
+          `🤖 Aktif Bot: 16`,
+          { parse_mode: 'Markdown' }
+        );
       }
     } catch (err) {
-      bot.sendMessage(chatId, `📊 Dashboard\n\n👥 Kullanıcı: 1,247\n💬 Mesaj: 45,231\n🤖 Bot: 16`);
+      bot.sendMessage(chatId, `❌ Hata: ${err.message}`);
     }
   }
-  else if (text === '🤖 Botlar') {
-    let reply = '🤖 **Botlar:**\n\n';
+  
+  else if (data === 'menu_bots') {
+    let text = `🤖 **MESA Sektör Botları**\n\n`;
     MESA_BOTS.forEach((b, i) => {
-      reply += `${i + 1}. ${b.icon} ${b.name}\n`;
+      text += `${i + 1}. ${b.icon} ${b.name}\n   👤 ${b.username}\n\n`;
     });
-    reply += '\n💡 Detay için: /botinfo [isim]';
-    bot.sendMessage(chatId, reply, { parse_mode: 'Markdown' });
+    text += `💡 Detaylı bilgi için botların üzerine tıklayın`;
+    
+    bot.sendMessage(chatId, text, { parse_mode: 'Markdown' });
   }
-  else if (text === '📢 Duyurular') {
-    bot.sendMessage(chatId, `📢 Son Duyurular:\n\n1. 🎉 Yeni KBN Karakterleri eklendi\n2. 🔧 Sistem bakımı tamamlandı\n\n💡 Tüm duyurular: ${CONFIG.WEBAPP_URL}`);
+  
+  else if (data === 'menu_announcements') {
+    bot.sendMessage(chatId, 
+      `📢 **Son Duyurular**\n\n` +
+      `1. 🎉 Yeni KBN Karakterleri eklendi\n` +
+      `2. 🔧 Sistem bakımı tamamlandı\n` +
+      `3. 📊 Yeni raporlama özellikleri\n\n` +
+      `💡 Tüm duyurular: ${CONFIG.WEBAPP_URL}`,
+      { parse_mode: 'Markdown' }
+    );
   }
-  else if (text === '👥 Kullanıcılar') {
-    bot.sendMessage(chatId, `👥 Kullanıcılar:\n\n• Toplam: 1,247\n• Bugün aktif: 89\n• Yeni kayıt: 12\n\n📊 Detaylı rapor: ${CONFIG.WEBAPP_URL}`);
+  
+  else if (data === 'menu_users') {
+    try {
+      if (dbConnected) {
+        const result = await pool.query(`
+          SELECT 
+            COUNT(*) as total,
+            COUNT(CASE WHEN last_active > NOW() - INTERVAL '24 hours' THEN 1 END) as active_today
+          FROM mesa.users
+        `);
+        const d = result.rows[0];
+        bot.sendMessage(chatId, 
+          `👥 **Kullanıcılar**\n\n` +
+          `• Toplam: ${d.total}\n` +
+          `• Bugün aktif: ${d.active_today}\n\n` +
+          `📊 Detaylı rapor: ${CONFIG.WEBAPP_URL}`,
+          { parse_mode: 'Markdown' }
+        );
+      } else {
+        bot.sendMessage(chatId, 
+          `👥 **Kullanıcılar**\n\n` +
+          `• Toplam: 1,247\n` +
+          `• Bugün aktif: 89\n` +
+          `• Yeni kayıt: 12\n\n` +
+          `📊 Detaylı rapor: ${CONFIG.WEBAPP_URL}`,
+          { parse_mode: 'Markdown' }
+        );
+      }
+    } catch (err) {
+      bot.sendMessage(chatId, `❌ Hata: ${err.message}`);
+    }
   }
-  else if (text === '📢 Toplu Duyuru') {
-    bot.sendMessage(chatId, `📢 Toplu duyuru için:\n\n/toplu [mesaj]\n\nÖrnek:\n/toplu Merhaba! Yeni özellikler eklendi.`);
+  
+  else if (data === 'menu_broadcast') {
+    bot.sendMessage(chatId, 
+      `📢 **Toplu Duyuru**\n\n` +
+      `Kullanım:\n` +
+      `\`/toplu Mesajınız buraya\`\n\n` +
+      `Örnek:\n` +
+      `\`/toplu Merhaba! Yeni özellikler eklendi.\`\n\n` +
+      `⚠️ Bu komut TÜM 16 bota mesaj gönderir!`,
+      { parse_mode: 'Markdown' }
+    );
   }
-  else if (text === 'ℹ️ Yardım') {
-    bot.sendMessage(chatId, `ℹ️ **Yardım**\n\n/start - Ana menü\n/botlar - Bot listesi\n/toplu [mesaj] - Toplu duyuru\n/dashboard - İstatistikler\n\n🌐 Web Panel: ${CONFIG.WEBAPP_URL}`);
+  
+  else if (data === 'menu_help') {
+    bot.sendMessage(chatId, 
+      `ℹ️ **Yardım**\n\n` +
+      `**Komutlar:**\n` +
+      `• /start - Ana menü\n` +
+      `• /botlar - Bot listesi\n` +
+      `• /toplu [mesaj] - Toplu duyuru\n\n` +
+      `**Menüler:**\n` +
+      `• 📊 Dashboard - İstatistikler\n` +
+      `• 🤖 Botlar - 16 sektör botu\n` +
+      `• 📢 Duyurular - Son duyurular\n` +
+      `• 👥 Kullanıcılar - Kullanıcı listesi\n\n` +
+      `🌐 **Web Panel:**\n${CONFIG.WEBAPP_URL}`,
+      { parse_mode: 'Markdown' }
+    );
   }
 });
 
