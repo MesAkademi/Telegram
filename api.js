@@ -188,21 +188,27 @@ function initBots() {
 
 app.get('/api/dashboard', async (req, res) => {
   try {
-    if (!dbConnected) throw new Error('DB bağlı değil');
+    if (!dbConnected) {
+      console.error('❌ /api/dashboard: DB bağlı değil');
+      throw new Error('DB bağlı değil');
+    }
     
     const result = await pool.query(`
       SELECT 
         (SELECT COUNT(*) FROM mesa.users) as total_users,
-        (SELECT COUNT(DISTINCT user_id) FROM mesa.telegram_messages WHERE created_at > NOW() - INTERVAL '24 hours') as active_users,
+        (SELECT COUNT(DISTINCT telegram_id) FROM mesa.users WHERE last_active > NOW() - INTERVAL '24 hours') as active_users,
         (SELECT COUNT(*) FROM mesa.telegram_messages) as total_messages,
         (SELECT COUNT(*) FROM mesa.telegram_bots WHERE status = 'active') as active_bots
     `);
     
+    console.log('✅ /api/dashboard:', result.rows[0]);
     res.json({ success: true, data: result.rows[0] });
   } catch (err) {
+    console.error('❌ /api/dashboard hatası:', err.message);
     res.json({ 
       success: true, 
-      data: { total_users: 1247, active_users: 89, total_messages: 45231, active_bots: 16 },
+      data: { total_users: 1, active_users: 0, total_messages: 0, active_bots: 16 },
+      error: err.message,
       demo: true 
     });
   }
@@ -555,7 +561,7 @@ async function start() {
   // Tabloları oluştur
   await initDB();
   
-  // Botları başlat
+  // Botları başlat - BUNU EN BAŞTA YAP
   initBots();
   
   // Sunucuyu başlat
