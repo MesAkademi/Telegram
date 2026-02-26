@@ -1,9 +1,9 @@
 /**
- * MESA KIMI - BASİT & ÇALIŞAN SÜRÜM
- * Sadece temel özellikler - hatasız çalışır
+ * MESA KIMI - SQL + GERÇEK DUYURU SİSTEMİ
  */
 
 const express = require('express');
+const { Pool } = require('pg');
 const cors = require('cors');
 const path = require('path');
 const TelegramBot = require('node-telegram-bot-api');
@@ -18,10 +18,52 @@ app.use(express.static(path.join(__dirname)));
 // ==========================================
 
 const CONFIG = {
+  DATABASE_URL: process.env.DATABASE_URL || 'postgres://postgres:zgUFYb7X64GeaS74n4cz4xwNa4wtal1O8q2NFQ1NWnT5u2hFkX5J7yL5DfsYOssj@postgresql-database-z0848sg4oocsk8o8kswwks00:5432/postgres',
   BOT_TOKEN: process.env.BOT_TOKEN || '8568828893:AAGSNh5FYXx-Y1khFtHlEQLDGikVLesC1Wg',
   WEBAPP_URL: process.env.WEBAPP_URL || 'https://telegram.mesakademi.com.tr',
   PORT: process.env.PORT || 3000
 };
+
+// ==========================================
+// SQL BAĞLANTISI
+// ==========================================
+
+let pool = null;
+let dbConnected = false;
+
+try {
+  pool = new Pool({
+    connectionString: CONFIG.DATABASE_URL,
+    ssl: false,
+    max: 10,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 10000
+  });
+  
+  pool.on('error', (err) => {
+    console.error('🚨 DB Hatası:', err.message);
+    dbConnected = false;
+  });
+  
+  console.log('⏳ Veritabanına bağlanılıyor...');
+} catch (err) {
+  console.error('❌ DB Bağlantı Hatası:', err.message);
+}
+
+// Bağlantıyı test et
+async function testDB() {
+  if (!pool) return false;
+  try {
+    const result = await pool.query('SELECT NOW() as time');
+    console.log('✅ Veritabanına bağlandı:', result.rows[0].time);
+    dbConnected = true;
+    return true;
+  } catch (err) {
+    console.error('❌ DB Test Hatası:', err.message);
+    dbConnected = false;
+    return false;
+  }
+}
 
 // ==========================================
 // 16 MESA BOTU - TOKEN'LAR
@@ -64,19 +106,65 @@ function initBots() {
   console.log(`🤖 ${botInstances.size} bot hazır`);
 }
 
-// Toplu duyuru gönder
+// SQL'den kullanıcıları çek ve duyuru gönder
 async function broadcastToAll(message) {
   const results = [];
-  for (const [id, { bot, config }] of botInstances) {
-    try {
-      // Botun kendi kanalına gönder (örnek)
-      // Gerçek kullanımda botun kullanıcı listesi çekilmeli
-      console.log(`📢 ${config.name}: Duyuru hazır`);
-      results.push({ bot: id, status: 'ok' });
-    } catch (err) {
-      results.push({ bot: id, status: 'error', error: err.message });
-    }
+  
+  if (!dbConnected) {
+    console.error('❌ DB bağlı değil, duyuru gönderilemiyor');
+    return [{ status: 'error', error: 'DB bağlı değil' }];
   }
+  
+  try {
+    // Her botun kullanıcılarını çek
+    for (const [botId, { bot, config }] of botInstances) {
+      try {
+        // SQL'den bu botun kullanıcılarını çek
+        const usersResult = await pool.query(`
+          SELECT DISTINCT telegram_chat_id 
+          FROM mesa.telegram_messages 
+          WHERE bot_id = $1 
+          AND telegram_chat_id IS NOT NULL
+        `, [botId]);
+        
+        const users = usersResult.rows;
+        let sent = 0;
+        let failed = 0;
+        
+        // Her kullanıcıya gönder
+        for (const user of users) {
+          try {
+            await bot.sendMessage(user.telegram_chat_id, 
+              `📢 **Duyuru**\n\n${message}\n\n_${config.name}_`,
+              { parse_mode: 'Markdown' }
+            );
+            sent++;
+          } catch (err) {
+            console.error(`❌ ${config.name} - Kullanıcı ${user.telegram_chat_id}:`, err.message);
+            failed++;
+          }
+        }
+        
+        results.push({ 
+          bot: botId, 
+          status: 'ok', 
+          sent,
+          failed,
+          total: users.length 
+        });
+        
+        console.log(`📢 ${config.name}: ${sent} gönderildi, ${failed} başarısız`);
+        
+      } catch (err) {
+        console.error(`❌ ${config.name} hatası:`, err.message);
+        results.push({ bot: botId, status: 'error', error: err.message });
+      }
+    }
+  } catch (err) {
+    console.error('❌ Broadcast hatası:', err);
+    results.push({ status: 'error', error: err.message });
+  }
+  
   return results;
 }
 
@@ -224,8 +312,20 @@ console.log('✅ Bot hazır!');
 // SUNUCUYU BAŞLAT
 // ==========================================
 
-app.listen(CONFIG.PORT, () => {
-  console.log(`🚀 API çalışıyor: http://localhost:${CONFIG.PORT}`);
-  console.log(`🤖 16 MESA Botu hazır`);
-  console.log(`📢 Toplu duyuru: /toplu [mesaj]`);
-});
+async function start() {
+  // DB bağlantısını test et
+  await testDB();
+  
+  // Botları başlat
+  initBots();
+  
+  // Sunucuyu başlat
+  app.listen(CONFIG.PORT, () => {
+    console.log(`🚀 API çalışıyor: http://localhost:${CONFIG.PORT}`);
+    console.log(`📊 DB Durumu: ${dbConnected ? '✅ Bağlı' : '❌ Bağlı değil'}`);
+    console.log(`🤖 16 MESA Botu hazır`);
+    console.log(`📢 Toplu duyuru: /toplu [mesaj]`);
+  });
+}
+
+start();
