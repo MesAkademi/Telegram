@@ -479,13 +479,25 @@ bot.on('callback_query', async (query) => {
   }
   
   else if (data === 'menu_bots') {
-    let text = `🤖 **MESA Sektör Botları**\n\n`;
-    MESA_BOTS.forEach((b, i) => {
-      text += `${i + 1}. ${b.icon} ${b.name}\n   👤 ${b.username}\n\n`;
-    });
-    text += `💡 Detaylı bilgi için botların üzerine tıklayın`;
+    // 16 botu 2 kolonlu inline buton olarak göster
+    const botButtons = [];
+    for (let i = 0; i < MESA_BOTS.length; i += 2) {
+      const row = [];
+      row.push({ text: `${MESA_BOTS[i].icon} ${MESA_BOTS[i].name}`, url: `https://t.me/${MESA_BOTS[i].username.replace('@', '')}` });
+      if (MESA_BOTS[i + 1]) {
+        row.push({ text: `${MESA_BOTS[i + 1].icon} ${MESA_BOTS[i + 1].name}`, url: `https://t.me/${MESA_BOTS[i + 1].username.replace('@', '')}` });
+      }
+      botButtons.push(row);
+    }
     
-    bot.sendMessage(chatId, text, { parse_mode: 'Markdown' });
+    bot.sendMessage(chatId, 
+      `🤖 **MESA Sektör Botları**\n\n` +
+      `Aşağıdaki botlara tıklayarak ulaşabilirsiniz:`,
+      { 
+        parse_mode: 'Markdown',
+        reply_markup: { inline_keyboard: botButtons }
+      }
+    );
   }
   
   else if (data === 'menu_announcements') {
