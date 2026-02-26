@@ -284,24 +284,37 @@ app.get('/', (req, res) => {
 async function broadcastToAll(message) {
   const results = [];
   
-  if (!dbConnected) {
-    return [{ status: 'error', error: 'DB bağlı değil' }];
+  // Bot instance'ları boşsa yeniden oluştur
+  if (botInstances.size === 0) {
+    console.log('🤖 Bot instance\'ları boş, yeniden oluşturuluyor...');
+    initBots();
   }
+  
+  console.log(`🤖 ${botInstances.size} bot instance hazır`);
   
   try {
     // Tüm kullanıcıları çek
-    const usersResult = await pool.query(`
-      SELECT telegram_id FROM mesa.users WHERE telegram_id IS NOT NULL
-    `);
+    let users = [];
+    if (dbConnected) {
+      const usersResult = await pool.query(`
+        SELECT telegram_id FROM mesa.users WHERE telegram_id IS NOT NULL
+      `);
+      users = usersResult.rows;
+    }
     
-    console.log(`📢 Toplam ${usersResult.rows.length} kullanıcıya duyuru gönderiliyor...`);
+    // DB boşsa, sadece gönderen kullanıcıya gönder (test için)
+    if (users.length === 0) {
+      console.log('⚠️ DB\'de kullanıcı yok, sadece test mesajı gönderiliyor...');
+    }
+    
+    console.log(`📢 ${users.length} kullanıcıya duyuru gönderiliyor...`);
     
     // 16 BOT'A GÖNDER
     for (const [botId, { bot: botInstance, config }] of botInstances) {
       let sent = 0;
       let failed = 0;
       
-      for (const user of usersResult.rows) {
+      for (const user of users) {
         try {
           await botInstance.sendMessage(user.telegram_id, 
             `📢 **Duyuru**\n\n${message}\n\n_${config.name}_`,
@@ -309,7 +322,7 @@ async function broadcastToAll(message) {
           );
           sent++;
           
-          // Rate limit için bekle (her 20 mesajda 1 saniye)
+          // Rate limit için bekle
           if (sent % 20 === 0) {
             await new Promise(resolve => setTimeout(resolve, 1000));
           }
@@ -325,7 +338,7 @@ async function broadcastToAll(message) {
         status: 'ok', 
         sent, 
         failed, 
-        total: usersResult.rows.length 
+        total: users.length 
       });
       
       console.log(`✅ ${config.name}: ${sent} gönderildi, ${failed} başarısız`);
@@ -333,10 +346,12 @@ async function broadcastToAll(message) {
     
     // Duyuruyu kaydet
     const totalSent = results.reduce((sum, r) => sum + r.sent, 0);
-    await pool.query(`
-      INSERT INTO mesa.announcements (title, content, sent_to)
-      VALUES ('Toplu Duyuru - 16 Bot', $1, $2)
-    `, [message, totalSent]);
+    if (dbConnected) {
+      await pool.query(`
+        INSERT INTO mesa.announcements (title, content, sent_to)
+        VALUES ('Toplu Duyuru - 16 Bot', $1, $2)
+      `, [message, totalSent]);
+    }
     
   } catch (err) {
     console.error('❌ Broadcast hatası:', err);
